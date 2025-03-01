@@ -1,0 +1,18 @@
+<!-- <basics wx:if="{{PageCur=='basics'}}"></basics>-->
+<resolution wx:if="{{PageCur=='resolution'}}"></resolution>
+<help wx:if="{{PageCur=='help'}}"></help>
+<view class="cu-bar tabbar bg-white shadow foot">
+  <view class="action" bindtap="NavChange" data-cur="resolution">
+    <view class='cuIcon-cu-image'>
+      <image src="/images/tabbar/video{{PageCur=='resolution'?'_cur':''}}.png"></image>
+    </view>
+    <view class="{{PageCur=='resolution'?'text-blue':'text-gray'}}">视频解析</view>
+  </view>
+  
+  <view class="action" bindtap="NavChange" data-cur="help">
+    <view class='cuIcon-cu-image'>
+      <image src="/images/tabbar/help{{PageCur=='help'?'_cur':''}}.png"></image>
+    </view>
+    <view class="{{PageCur=='help'?'text-blue':'text-gray'}}">帮助</view>
+  </view>
+</view>
