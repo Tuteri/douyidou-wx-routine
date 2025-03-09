@@ -1,18 +1,69 @@
-<!-- <basics wx:if="{{PageCur=='basics'}}"></basics>-->
-<resolution wx:if="{{PageCur=='resolution'}}"></resolution>
-<help wx:if="{{PageCur=='help'}}"></help>
-<view class="cu-bar tabbar bg-white shadow foot">
-  <view class="action" bindtap="NavChange" data-cur="resolution">
-    <view class='cuIcon-cu-image'>
-      <image src="/images/tabbar/video{{PageCur=='resolution'?'_cur':''}}.png"></image>
+<view class="container">
+  <t-toast id="t-toast" />
+  <t-notice-bar visible="{{true}}" prefixIcon="{{false}}" theme="success">
+    <view slot="content">
+      <view>1.本小程序永久提供免费解析服务,如果大家使用下来觉得还不错的可以右上角分享给自己的朋友。</view>
+      <view>2.单次下载最多200MB，如果无法下载请复制链接到浏览器下载</view>
+      <view>3.仅供学习和测试，请勿用于商业用途</view>
+      <view>4.支持10+平台，反馈邮箱2462774332@qq.com</view>
     </view>
-    <view class="{{PageCur=='resolution'?'text-blue':'text-gray'}}">视频解析</view>
+  </t-notice-bar>
+
+  <t-textarea t-class="external-class" label="视频链接" placeholder="粘贴视频短链接到这里" maxlength="500" indicator bind:change="onChange" value="{{videoUrl}}" />
+  <!-- <button class="cu-tag line-green" wx:if="{{!shortVideoUrl}}" bindtap="copy">手动粘贴</button> -->
+
+  <view class="button-example">
+    <t-button theme="light" block size="large" t-class="group-btn" bind:tap="paste">一键粘贴</t-button>
+    <t-button theme="primary" block size="large" t-class="group-btn" bind:tap="submit">一键去水印</t-button>
   </view>
-  
-  <view class="action" bindtap="NavChange" data-cur="help">
-    <view class='cuIcon-cu-image'>
-      <image src="/images/tabbar/help{{PageCur=='help'?'_cur':''}}.png"></image>
-    </view>
-    <view class="{{PageCur=='help'?'text-blue':'text-gray'}}">帮助</view>
+  <view wx:if="{{(parseData.type == 'video' || parseData.type == 'slides') && parseData.video.length>0}}">
+    <t-divider content="视频（{{parseData.video.length}}）" />
+    <t-grid class="block" column="{{1}}" theme="card" gutter="32">
+      <t-grid-item wx:for="{{parseData.video}}" wx:key="index">
+        <video src="{{item}}" data-type="1" data-index="{{index}}" style="width: 100%;" />
+        <view class="button-example image-btns">
+          <t-button t-class="group-btn" size="small" bind:tap="saveVideo" data-index="{{index}}" data-text="{{parseData.proxy.video[index]}}" block>
+            <block wx:if="{{videoDownloadTask[index]}}">
+              <block wx:if="{{videoDownloadTask[index].action}}">
+                下载中 {{videoDownloadTask[index].progress}}%
+              </block>
+              <block wx:else>
+                下载完成
+              </block>
+            </block>
+            <block wx:else>下载视频</block>
+          </t-button>
+          <t-button t-class="group-btn" size="small" bind:tap="copyText" data-text="{{item}}" block>复制链接</t-button>
+        </view>
+      </t-grid-item>
+    </t-grid>
   </view>
+
+
+  <view wx:if="{{(parseData.type == 'note' || parseData.type == 'slides') && parseData.images.length>0}}">
+    <t-divider content="图集（{{parseData.images.length}}）" />
+    <t-grid class="block" column="{{2}}" theme="card" gutter="32">
+      <t-grid-item wx:for="{{parseData.images}}" wx:key="index">
+        <t-image src="{{item}}" mode="aspectFill" width="200" height="220" webp="{{true}}" bind:tap="showImageViewer" data-type="1" data-index="{{index}}" />
+        <view class="button-example image-btns">
+          <t-button size="extra-small" bind:tap="saveImage" data-index="{{index}}" data-text="{{parseData.proxy.images[index]}}" block>下载图片</t-button>
+          <t-button size="extra-small" bind:tap="copyText" data-text="{{item}}" block>复制链接</t-button>
+        </view>
+      </t-grid-item>
+    </t-grid>
+  </view>
+
+  <view wx:if="{{parseData.cover}}">
+    <t-divider content="封面" />
+    <t-grid class="block" column="{{2}}" theme="card">
+      <t-grid-item>
+        <t-image src="{{parseData.cover}}" mode="aspectFit" width="200" height="220" webp="{{true}}" bind:tap="showImageViewer" data-type="0" data-index="0" />
+        <view class="button-example image-btns">
+          <t-button size="extra-small" bind:tap="saveImage" data-index="{{index}}" data-text="{{parseData.proxy.cover}}" block>下载图片</t-button>
+          <t-button size="extra-small" bind:tap="copyText" data-text="{{parseData.cover}}" block>复制链接</t-button>
+        </view>
+      </t-grid-item>
+    </t-grid>
+  </view>
+  <t-image-viewer closeBtn="{{true}}" showIndex="{{true}}" initial-index="{{curIndex}}" visible="{{visible}}" images="{{imagesViewer}}" bind:close="closeImageViewer" />
 </view>

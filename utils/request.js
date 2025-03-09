@@ -1,3 +1,4 @@
+const {decryptData} = require('util.js');
 function requestPostApi(url, params, sourceObj, successFun, failFun) {
   requestApi(url, params, 'POST', sourceObj, successFun, failFun)
 }
@@ -19,7 +20,7 @@ function requestApi(url, params, method, sourceObj, successFun, failFun) {
       'Content-Type': "application/x-www-form-urlencoded",
     },
     success: function (res) {
-      typeof successFun == 'function' && successFun(res.data, sourceObj);
+      typeof successFun == 'function' && successFun(decryptData(res.data), sourceObj);
     },
     fail: function (res) {
       typeof failFun == 'function' && failFun(res.data, sourceObj);

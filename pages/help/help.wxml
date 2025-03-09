@@ -1,9 +1,4 @@
 <scroll-view scroll-y class="scrollPage">
-  <cu-custom bgColor="bg-gradual-blue">
-    <view slot="content" class="text-shadow-meows">
-      <text class="text-white">帮助</text>
-    </view>
-  </cu-custom>
   <view class="cu-card article">
     <view class="cu-item shadow">
       <view class="title">

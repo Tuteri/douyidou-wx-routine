@@ -1,15 +1,16 @@
 {
   "pages": [
-    "pages/index/index"
+    "pages/index/index",
+    "pages/help/help"
   ],
   "window": {
-    "navigationBarBackgroundColor": "#39b54a",
     "navigationBarTitleText": "抖一抖去水印提取",
-    "navigationStyle": "custom",
-    "navigationBarTextStyle": "white"
+    "navigationBarBackgroundColor": "@navBgColor",
+    "navigationBarTextStyle": "@navTxtStyle"
   },
   "usingComponents": {
-    "cu-custom": "/colorui/components/cu-custom"
   },
-  "sitemapLocation": "sitemap3.json"
+  "sitemapLocation": "sitemap.json",
+  "darkmode": true,
+  "themeLocation":"theme.json"
 }

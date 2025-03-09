@@ -1,8 +1,17 @@
 {
   "usingComponents": {
-    "my": "/pages/home/home",
-    "help":"/pages/help/help",
-    "resolution":"/pages/resolution/resolution",
-    "welfare":"/pages/welfare/welfare"
+    "t-textarea": "tdesign-miniprogram/textarea/textarea",
+    "t-notice-bar": "tdesign-miniprogram/notice-bar/notice-bar",
+    "t-button":"tdesign-miniprogram/button/button",
+    "t-toast": "tdesign-miniprogram/toast/toast",
+    "t-image": "tdesign-miniprogram/image/image",
+    "t-row": "tdesign-miniprogram/row/row",
+    "t-col": "tdesign-miniprogram/col/col",
+    "t-grid": "tdesign-miniprogram/grid/grid",
+    "t-grid-item": "tdesign-miniprogram/grid-item/grid-item",
+    "t-divider": "tdesign-miniprogram/divider/divider",
+    "t-back-top": "tdesign-miniprogram/back-top/back-top",
+    "t-image-viewer": "tdesign-miniprogram/image-viewer/image-viewer"
+    
   }
 }

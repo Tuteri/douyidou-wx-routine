@@ -1,19 +1,21 @@
-/**index.wxss**/
-.userinfo {
+page {
+  --td-grid-bg-color: transparent;
+  --td-grid-item-bg-color: transparent;
+}
+.button-example{
+  padding: 32rpx;
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  color: #aaa;
+  justify-content: space-between;
+  gap: 32rpx;
+  width: 100%;
+  box-sizing: border-box;
 }
-
-.userinfo-avatar {
-  overflow: hidden;
-  width: 128rpx;
-  height: 128rpx;
-  margin: 20rpx;
-  border-radius: 50%;
+.none{
+  display: none
 }
-
-.usermotto {
-  margin-top: 200px;
+.image-btns{
+  width: 100%;
+  padding: 0;
+  padding-top: 32rpx;
+  /* gap: 16rpx; */
 }
