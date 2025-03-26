@@ -1,11 +1,4 @@
-## [抖一抖去水印使用说明](https://codeup.aliyun.com/67e3e054eede38943821dfc8/wx-routine.git)
-
-通过命令或其他方式拉取代码
-
-```
-git clone https://codeup.aliyun.com/67e3e054eede38943821dfc8/wx-routine.git
-```
-
+## 抖一抖去水印使用说明
 
 
 ### 部署说明
