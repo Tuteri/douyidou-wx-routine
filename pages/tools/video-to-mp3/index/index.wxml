@@ -1,0 +1,13 @@
+<view class="container">
+  <t-tabs animation="{{ { duration: 0.3 } }}" defaultValue="{{current}}" t-class="custom-tabs" t-class-content="custom-panel" bind:change="change" value="{{current}}">
+    <t-tab-panel label="任务提交" value="0" />
+    <t-tab-panel label="任务列表" value="1" />
+  </t-tabs>
+
+  <view class="custom-panel__content" wx:if="{{current == 0}}">
+    <d-video-to-mp3-submit></d-video-to-mp3-submit>
+  </view>
+  <view class="custom-panel__content" wx:if="{{current == 1}}">
+    <d-video-to-mp3-list></d-video-to-mp3-list>
+  </view>
+</view>

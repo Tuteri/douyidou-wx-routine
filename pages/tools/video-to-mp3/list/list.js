@@ -13,7 +13,7 @@ Component({
       limit: 10,
       total: 0,
       totalPage: 0,
-      type:1,
+      type:3
     },
     statsMap: {
       "-1": "不存在",

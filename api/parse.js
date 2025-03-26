@@ -10,6 +10,12 @@ const url = (data) => {
 const transcode = (data) =>{
   return api.post(BASE_URL + "/transcode", data);
 }
+const videoMd5 = (data) =>{
+  return api.post(BASE_URL + "/videoMd5", data);
+}
+const videoToMp3 = (data) =>{
+  return api.post(BASE_URL + "/videoToMp3", data);
+}
 const transcodeList = (data) =>{
   return api.get(BASE_URL + "/transcode/list", data);
 }
@@ -23,6 +29,8 @@ const transcodeStats = (data) =>{
 module.exports = {
   url,
   transcode,
+  videoMd5,
+  videoToMp3,
   transcodeList,
   transcodeStats,
   transcodeStop,

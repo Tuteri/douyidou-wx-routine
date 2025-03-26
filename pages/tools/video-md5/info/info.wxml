@@ -8,7 +8,9 @@
       <view wx:else>
         <video src="{{info.downloadUrl}}" style="width: 100%;" wx:if="{{info.stats == 2}}" />
         <t-cell title="{{info.name}}" note="创建于 {{info.createFromNow}}" hover />
-        <t-cell title="文件大小" note="{{info.size}}" hover wx:if="{{info.stats==1 || info.stats == 2}}" bind:click="copyText">
+        <t-cell title="已处理时长" note="{{info.timeText}}" hover wx:if="{{info.stats==1}}">
+        </t-cell>
+        <t-cell title="文件大小" note="{{info.size}}" hover wx:if="{{info.stats == 2}}" bind:click="copyText">
           <view slot="description">
             {{allowDownload?"":"文件过大请复制到浏览器下载"}}
           </view>

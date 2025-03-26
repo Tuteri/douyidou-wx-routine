@@ -1,0 +1,12 @@
+{
+  "disableScroll":true,
+  "usingComponents": {
+    "t-tabs": "tdesign-miniprogram/tabs/tabs",
+    "t-tab-panel": "tdesign-miniprogram/tab-panel/tab-panel",
+    "d-video-to-mp3-submit": "/pages/tools/video-to-mp3/submit/submit",
+    "d-video-to-mp3-list": "/pages/tools/video-to-mp3/list/list",
+    "t-back-top": "tdesign-miniprogram/back-top/back-top"
+
+  },
+  "navigationBarTitleText": "视频音频提取"
+}

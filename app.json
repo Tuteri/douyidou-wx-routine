@@ -7,7 +7,12 @@
     "pages/tools/transcode/index/index",
     "pages/tools/transcode/submit/submit",
     "pages/tools/transcode/info/info",
-    "pages/tools/hash/index/index"
+    "pages/tools/video-md5/submit/submit",
+    "pages/tools/video-md5/index/index",
+    "pages/tools/video-md5/info/info",
+    "pages/tools/video-to-mp3/submit/submit",
+    "pages/tools/video-to-mp3/index/index",
+    "pages/tools/video-to-mp3/info/info"
   ],
   "window": {
     "navigationBarTitleText": "抖一抖去水印提取",

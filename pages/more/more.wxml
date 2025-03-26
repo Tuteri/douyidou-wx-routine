@@ -9,9 +9,12 @@
     <t-cell title="视频转格式（m3u8转MP4）" leftIcon="video-camera-1" url="/pages/tools/transcode/index/index" hover arrow >
       <t-badge count="公测" offset="{{skylineRender ? ['-16rpx', '-56rpx']: [0, 0]}}" shape="ribbon" slot="note" />
     </t-cell>
-    <t-cell title="视频MD5修改" leftIcon="video-library" hover arrow url="/pages/tools/hash/index/index" />
-    <t-cell title="视频音频提取" leftIcon="video-camera-music" hover arrow bind:click="onTapDev" />
-    <t-cell title="字幕提取" leftIcon="video-camera-minus" hover arrow bind:click="onTapDev" />
+    <t-cell title="视频MD5修改" leftIcon="video-library" hover arrow url="/pages/tools/video-md5/index/index" >
+      <t-badge count="公测" offset="{{skylineRender ? ['-16rpx', '-56rpx']: [0, 0]}}" shape="ribbon" slot="note" />
+    </t-cell>
+    <t-cell title="视频音频提取" leftIcon="video-camera-music" hover arrow url="/pages/tools/video-to-mp3/index/index" >
+      <t-badge count="公测" offset="{{skylineRender ? ['-16rpx', '-56rpx']: [0, 0]}}" shape="ribbon" slot="note" />
+    </t-cell>
   </t-cell-group>
   </view>
 </view>

@@ -1,12 +1,14 @@
 
 const dayjs = require("dayjs")
 const relativeTime = require("dayjs/plugin/relativeTime"); // 相对时间插件
+const duration = require("dayjs/plugin/duration"); // 相对时间插件
 require("dayjs/locale/zh-cn"); // 引入中文语言包
 import {
   Toast
 } from 'tdesign-miniprogram';
 
 dayjs.extend(relativeTime);
+dayjs.extend(duration);
 dayjs.locale("zh-cn"); // 设置语言为中文
 
 

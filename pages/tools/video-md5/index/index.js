@@ -1,13 +1,16 @@
-// pages/tools/hash/index/index.js
 Page({
 
   /**
    * 页面的初始数据
    */
   data: {
-
+    current:0,
   },
-
+  change(e){
+    this.setData({
+      current:e.detail.value
+    })
+  },
   /**
    * 生命周期函数--监听页面加载
    */
