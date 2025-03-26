@@ -4,6 +4,9 @@
 
 QQ 2462774332
 
+<img src="http://imgurl.diadi.cn/imgs/2025/03/a9e0576401f9045d.png" style="zoom:50%;" />
+
+
 ### 部署说明
 
 #### 1. 下载依赖
