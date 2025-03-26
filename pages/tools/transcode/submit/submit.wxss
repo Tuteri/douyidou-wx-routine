@@ -1,0 +1,10 @@
+.external-class {
+  height: 200rpx;
+  flex: 1;
+}
+.box {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  background-color: var(--td-bg-color-container, #fff);
+}

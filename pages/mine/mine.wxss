@@ -1,0 +1,66 @@
+.container {
+  padding: 20rpx;
+}
+
+/* 个人信息区域 */
+.header {
+  display: flex;
+  align-items: center;
+  padding: 30rpx 20rpx;
+  background-color: #ffffff;
+  /* border-radius: 20rpx; */
+  border-radius: var(--td-radius-large, 18rpx);
+  /* box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.1); */
+  margin-bottom: 20rpx;
+}
+
+.header:hover {
+  opacity: 0.9; /* 轻微点击反馈 */
+}
+
+.avatar {
+  width: 100rpx;
+  height: 100rpx;
+  margin-right: 20rpx;
+}
+
+/* 右侧信息 */
+.info {
+  display: flex;
+  flex-direction: column;
+}
+
+.nickname {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #333;
+}
+
+.username {
+  margin-top: 6rpx;
+  font-size: 26rpx;
+  color: #888;
+}
+.t-avatar__icon{
+  color: #eee;
+  background-color: #aaa;
+}
+.t-cell-group--card{
+  margin: 0 !important;
+}
+/* 适配深色模式 */
+@media (prefers-color-scheme: dark) {
+  .mine-page {
+    background-color: transparent; 
+  }
+  .header {
+    background-color: var(--td-cell-bg-color, var(--td-bg-color-container, var(--td-font-white-1, #ffffff)));
+    /* box-shadow: 0 2rpx 10rpx rgba(255, 255, 255, 0.1); */
+  }
+  .nickname {
+    color: #ffffff;
+  }
+  .username {
+    color: #bbbbbb;
+  }
+}

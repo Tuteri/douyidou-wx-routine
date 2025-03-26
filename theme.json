@@ -1,10 +1,38 @@
 {
   "light": {
     "navBgColor": "#f6f6f6",
-    "navTxtStyle": "black"
+    "navTxtStyle": "black",
+    "bgColor": "#ffffff",
+    "bgTxtStyle": "light",
+    "bgColorTop": "#eeeeee",
+    "bgColorBottom": "#efefef",
+    "tabFontColor": "#aaaaaa",
+    "tabSelectedColor": "#111111",
+    "tabBgColor": "#ffffff",
+    "tabBorderStyle": "black",
+    "iconPath1": "images/index_light.png",
+    "selectedIconPath1": "images/index_light_active.png",
+    "iconPath2": "images/more_light.png",
+    "selectedIconPath2": "images/more_light_active.png",
+    "iconPath3": "images/mine_light.png",
+    "selectedIconPath3": "images/mine_light_active.png"
   },
   "dark": {
     "navBgColor": "#191919",
-    "navTxtStyle": "white"
+    "navTxtStyle": "white",
+    "bgColor": "#1f1f1f",
+    "bgTxtStyle": "dark",
+    "bgColorTop": "#191919",
+    "bgColorBottom": "#1f1f1f",
+    "tabFontColor": "#666666",
+    "tabSelectedColor": "#eeeeee",
+    "tabBgColor": "#191919",
+    "tabBorderStyle": "white",
+    "iconPath1": "images/index_dark.png",
+    "selectedIconPath1": "images/index_dark_active.png",
+    "iconPath2": "images/more_dark.png",
+    "selectedIconPath2": "images/more_dark_active.png",
+    "iconPath3": "images/mine_dark.png",
+    "selectedIconPath3": "images/mine_dark_active.png"
   }
 }

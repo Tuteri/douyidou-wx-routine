@@ -1,0 +1,10 @@
+{
+  "disableScroll": true,
+  "usingComponents": {
+    "t-skeleton": "tdesign-miniprogram/skeleton/skeleton",
+    "t-pull-down-refresh": "tdesign-miniprogram/pull-down-refresh/pull-down-refresh",
+    "t-cell": "tdesign-miniprogram/cell/cell",
+    "t-tag": "tdesign-miniprogram/tag/tag",
+    "t-button":"tdesign-miniprogram/button/button"
+  }
+}

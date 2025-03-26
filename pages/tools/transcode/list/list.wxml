@@ -1,0 +1,32 @@
+<view>
+  <t-pull-down-refresh value="{{enable}}" loadingTexts="{{['下拉刷新', '松手刷新', '正在刷新', '刷新完成']}}"  bind:refresh="onRefresh" bind:scroll="onScroll" bind:scrolltolower="onScrollToLower" t-class="refresh"> 
+    <!-- 包裹页面全部内容 -->
+    <view class="box">
+      <view class="pulldown-reflesh__content" wx:if="{{list.length>0}}">
+        <t-cell wx:for="{{list}}" wx:key="index" title="{{item.name}}" hover arrow url="/pages/tools/transcode/info/info?id={{item.id}}">
+          <view slot="description" wx:if="{{item.stats == 2}}">
+            <!--  完成时间： -->{{item.doneFromNow}}
+          </view>
+          <view slot="description" wx:elif="{{item.stats == 3}}">
+            <!-- 失败时间： -->{{item.doneFromNow}}
+          </view>
+          <view slot="description" wx:elif="{{item.stats == 4}}">
+            <!-- 终止时间： -->{{item.doneFromNow}}
+          </view>
+          <view slot="description" wx:else>
+            <!-- 提交时间： -->{{item.createFromNow}}
+          </view>
+          <t-tag theme="primary" slot="note" wx:if="{{item.stats==1}}">转码中</t-tag>
+          <t-tag theme="success" slot="note" wx:elif="{{item.stats==2}}">成功</t-tag>
+          <t-tag theme="danger" slot="note" wx:elif="{{item.stats==3}}">失败</t-tag>
+          <t-tag theme="warning" slot="note" wx:elif="{{item.stats==4}}">终止</t-tag>
+          <t-tag theme="default" slot="note" wx:else>等待中</t-tag>
+        </t-cell>
+      </view>
+      <t-empty t-class="empty" wx:else description="您还没有提交过任务~" />
+      <t-back-top t-class="back-top" text="顶部" scroll-top="{{scrollTop}}" visibility-height="{{100}}" />
+    </view>
+
+  </t-pull-down-refresh>
+
+</view>

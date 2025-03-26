@@ -1,0 +1,19 @@
+.refresh{
+  height: 100%;
+}
+.box {
+  min-height: calc(80vh);
+  padding-bottom: 200rpx;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+/* .scroll{
+  height: 100%;
+} */
+.t-empty{
+  height: 100%;
+}
+.back-top{
+  right:50rpx;
+  bottom: 300rpx;
+}

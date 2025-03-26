@@ -1,0 +1,12 @@
+{
+  "disableScroll":true,
+  "usingComponents": {
+    "t-tabs": "tdesign-miniprogram/tabs/tabs",
+    "t-tab-panel": "tdesign-miniprogram/tab-panel/tab-panel",
+    "d-transcode-submit": "/pages/tools/transcode/submit/submit",
+    "d-transcode-list": "/pages/tools/transcode/list/list",
+    "t-back-top": "tdesign-miniprogram/back-top/back-top"
+
+  },
+  "navigationBarTitleText": "视频格式转换"
+}

@@ -1,132 +1,159 @@
 // app.js
-const request = require('utils/request.js');
+const userApi = require('./api/user')
+const configApi = require('./api/config')
 App({
-  onLaunch() {
-    wx.getSystemInfo({
-      success: e => {
-        this.globalData.StatusBar = e.statusBarHeight;
-        let capsule = wx.getMenuButtonBoundingClientRect();
-        if (capsule) {
-          this.globalData.Custom = capsule;
-          this.globalData.CustomBar = capsule.bottom + capsule.top - e.statusBarHeight;
-        } else {
-          this.globalData.CustomBar = e.statusBarHeight + 50;
-        }
-      }
-    })
-    //         // 获取小程序更新机制兼容
-    //         if (wx.canIUse('getUpdateManager')) {
-    //           const updateManager = wx.getUpdateManager()
-    //           updateManager.onCheckForUpdate(function (res) {
-    //               // 请求完新版本信息的回调
-    //               if (res.hasUpdate) {
-    //                   updateManager.onUpdateReady(function () {
-    //                       wx.showModal({
-    //                           title: '更新提示',
-    //                           content: '新版本已经准备好，是否重启应用？',
-    //                           success: function (res) {
-    //                               if (res.confirm) {
-    //                                   // 新的版本已经下载好，调用 applyUpdate 应用新版本并重启
-    //                                   updateManager.applyUpdate()
-    //                               }
-    //                           }
-    //                       })
-    //                   })
-    //                   updateManager.onUpdateFailed(function () {
-    //                       // 新的版本下载失败
-    //                       wx.showModal({
-    //                           title: '已经有新版本了哟~',
-    //                           content: '新版本已经上线啦~，请您删除当前小程序，重新搜索打开哟~',
-    //                       })
-    //                   })
-    //               }
-    //           })
-    //       } else {
-    //           // 如果希望用户在最新版本的客户端上体验您的小程序，可以这样子提示
-    //           wx.showModal({
-    //               title: '提示',
-    //               content: '当前微信版本过低，无法使用该功能，请升级到最新微信版本后重试。'
-    //           })
-    //       }
-  },
   globalData: {
-    //  url:"http://192.168.1.34:8000",
-     url:"https://apiminiparse.diadi.cn",
-     ColorList: [{
-        title: '嫣红',
-        name: 'red',
-        color: '#e54d42'
-      },
-      {
-        title: '桔橙',
-        name: 'orange',
-        color: '#f37b1d'
-      },
-      {
-        title: '明黄',
-        name: 'yellow',
-        color: '#fbbd08'
-      },
-      {
-        title: '橄榄',
-        name: 'olive',
-        color: '#8dc63f'
-      },
-      {
-        title: '森绿',
-        name: 'green',
-        color: '#39b54a'
-      },
-      {
-        title: '天青',
-        name: 'cyan',
-        color: '#1cbbb4'
-      },
-      {
-        title: '海蓝',
-        name: 'blue',
-        color: '#0081ff'
-      },
-      {
-        title: '姹紫',
-        name: 'purple',
-        color: '#6739b6'
-      },
-      {
-        title: '木槿',
-        name: 'mauve',
-        color: '#9c26b0'
-      },
-      {
-        title: '桃粉',
-        name: 'pink',
-        color: '#e03997'
-      },
-      {
-        title: '棕褐',
-        name: 'brown',
-        color: '#a5673f'
-      },
-      {
-        title: '玄灰',
-        name: 'grey',
-        color: '#8799a3'
-      },
-      {
-        title: '草灰',
-        name: 'gray',
-        color: '#aaaaaa'
-      },
-      {
-        title: '墨黑',
-        name: 'black',
-        color: '#333333'
-      },
-      {
-        title: '雅白',
-        name: 'white',
-        color: '#ffffff'
-      },
-    ]
-  }
+    isLogin: null, // 用户登录状态
+    userInfo: null,
+    init: false,
+    config: null,
+  },
+  onLaunch() {
+    console.log("onLaunch")
+    // 获取小程序更新机制兼容
+    if (wx.canIUse('getUpdateManager')) {
+      const updateManager = wx.getUpdateManager()
+      updateManager.onCheckForUpdate(function (res) {
+        // 请求完新版本信息的回调
+        if (res.hasUpdate) {
+          updateManager.onUpdateReady(function () {
+            wx.showModal({
+              title: '更新提示',
+              content: '新版本已经准备好，是否重启应用？',
+              success: function (res) {
+                if (res.confirm) {
+                  // 新的版本已经下载好，调用 applyUpdate 应用新版本并重启
+                  updateManager.applyUpdate()
+                }
+              }
+            })
+          })
+          updateManager.onUpdateFailed(function () {
+            // 新的版本下载失败
+            wx.showModal({
+              title: '已经有新版本了哟~',
+              content: '新版本已经上线啦~，请您删除当前小程序，重新搜索打开哟~',
+            })
+          })
+        }
+      })
+    } else {
+      // 如果希望用户在最新版本的客户端上体验您的小程序，可以这样子提示
+      wx.showModal({
+        title: '提示',
+        content: '当前微信版本过低，无法使用该功能，请升级到最新微信版本后重试。'
+      })
+    }
+  },
+  onShow() {
+    console.log("onShow")
+    this.handleInit();
+    
+    this.init()
+  },
+  // 每个页面调用，是否完成初始化，登录状态等
+  // 状态初始化
+  init() {
+    // 已经初始化完成
+    if (this.globalData.init) {
+      return new Promise(resolve => {
+        resolve(true);
+      });
+    }
+    // 监听初始化是否完成
+    return new Promise((resolve, reject) => {
+      Object.defineProperty(this.globalData, 'init', {
+        get: function () {
+          return this._value;
+        },
+        set: function (newValue) {
+          this._value = newValue;
+          if (newValue) {
+            resolve(true);
+          } else {
+            reject(false)
+          }
+        }
+      });
+    })
+  },
+  handleInit() {
+    // 监听用户是否已经登录，
+    // 可以在这里做自动登录逻辑
+    const token = wx.getStorageSync("token");
+    // 验证token是否有效
+    wx.showLoading({
+      title: '加载中',
+      mask: true,
+    })
+    let promise1;
+    if (token) {
+      promise1 = this.handleGetUserInfo();
+    } else {
+      promise1 = this.onLogin();
+    }
+    // 等待promise全部执行
+    promise1.then(() => {
+      return this.handleConfigRoutine();
+    }).then(()=>{
+      console.log("handleInit")
+      wx.hideLoading();
+      this.globalData.init = true;
+    });
+  },
+  // 获取配置
+  handleConfigRoutine() {
+    return configApi.routine().then(res => {
+      this.globalData.config = res.data;
+      return Promise.resolve();
+    })
+  },
+  // 获取用户信息
+  handleGetUserInfo() {
+    return userApi.getUserInfo().then((res) => {
+      if (res.code === 200) {
+        // 更新全局数据
+        this.globalData.isLogin = true;
+        this.globalData.userInfo = res.data;
+        return Promise.resolve();
+      } else {
+        return this.onLogin()
+      }
+    }).catch(res => {
+      console.log(res)
+      return this.onLogin()
+    })
+  },
+  onLogin() {
+    if (this.globalData.isLogin) return Promise.resolve();
+    return new Promise((resolve, reject) => {
+      wx.login({
+        success: (res) => {
+          if (res.code) {
+            return userApi.login({
+              code: res.code
+            }).then(res => {
+              this.globalData.isLogin = true;
+              this.handleGetUserInfo().then(()=>{
+                resolve();
+              }).catch()
+            }).catch(err => {
+              reject();
+            })
+          }
+        },
+        fail: reject,
+      });
+    })
+  },
+  // 设置登录状态
+  setLoginState() {
+    this.globalData.isLogin = true;
+  },
+
+  // 设置退出登录状态
+  logout() {
+    this.globalData.isLogin = false;
+    wx.removeStorageSync("token"); // 移除本地存储的 token
+  },
 })

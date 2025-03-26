@@ -1,0 +1,41 @@
+<view class="container">
+  <t-pull-down-refresh value="{{enable}}" loadingTexts="{{['下拉刷新', '松手刷新', '正在刷新', '刷新完成']}}" bind:refresh="onRefresh" t-class="refresh">
+    <!-- 包裹页面全部内容 -->
+    <view class="box">
+      <view class="skeleton" wx:if="{{showSkeleton}}">
+        <t-skeleton rowCol="{{skeleton}}" loading></t-skeleton>
+      </view>
+      <view wx:else>
+        <video src="{{info.downloadUrl}}" style="width: 100%;" wx:if="{{info.stats == 2}}" />
+        <t-cell title="{{info.name}}" note="创建于 {{info.createFromNow}}" hover />
+        <t-cell title="文件大小" note="{{info.size}}" hover wx:if="{{info.stats==1 || info.stats == 2}}" bind:click="copyText">
+          <view slot="description">
+            {{allowDownload?"":"文件过大请复制到浏览器下载"}}
+          </view>
+        </t-cell>
+        <t-cell title="状态" hover>
+          <text wx:if="{{info.stats==2}}" slot="description">完成于 {{info.doneFromNow}}</text>
+          <t-tag theme="primary" slot="note" wx:if="{{info.stats==1}}">转码中</t-tag>
+          <t-tag theme="success" slot="note" wx:elif="{{info.stats==2}}">成功</t-tag>
+          <t-tag theme="danger" slot="note" wx:elif="{{info.stats==3}}">失败</t-tag>
+          <t-tag theme="warning" slot="note" wx:elif="{{info.stats==4}}">终止</t-tag>
+          <t-tag theme="default" slot="note" wx:else>等待中</t-tag>
+        </t-cell>
+        <view class="button-example image-btns" wx:if="{{info.stats == 2}}">
+          <t-button t-class="group-btn" size="small" bind:tap="saveVideo"  block wx:if="{{allowDownload}}">
+            <block wx:if="{{videoDownloadTask}}">
+              <block wx:if="{{videoDownloadTask.action}}">
+                下载中 {{videoDownloadTask.progress}}%
+              </block>
+              <block wx:else>
+                下载完成
+              </block>
+            </block>
+            <block wx:else>下载视频</block>
+          </t-button>
+          <t-button t-class="group-btn" size="small" bind:tap="copyText" block>复制链接</t-button>
+        </view>
+      </view>
+    </view>
+  </t-pull-down-refresh>
+</view>

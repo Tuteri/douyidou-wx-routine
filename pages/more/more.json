@@ -1,0 +1,9 @@
+{
+  "usingComponents": {
+    "t-cell": "tdesign-miniprogram/cell/cell",
+    "t-cell-group": "tdesign-miniprogram/cell-group/cell-group",
+    "t-notice-bar": "tdesign-miniprogram/notice-bar/notice-bar",
+    "t-icon": "tdesign-miniprogram/icon/icon",
+    "t-badge": "tdesign-miniprogram/badge/badge"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "component": true,
+  "styleIsolation": "apply-shared",
+  "usingComponents": {
+    "t-input": "tdesign-miniprogram/input/input",
+    "t-textarea": "tdesign-miniprogram/textarea/textarea",
+    "t-radio": "tdesign-miniprogram/radio/radio",
+    "t-radio-group": "tdesign-miniprogram/radio-group/radio-group",
+    "t-divider": "tdesign-miniprogram/divider/divider",
+    "t-button": "tdesign-miniprogram/button/button",
+    "t-notice-bar": "tdesign-miniprogram/notice-bar/notice-bar"
+  }
+}

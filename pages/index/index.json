@@ -11,7 +11,9 @@
     "t-grid-item": "tdesign-miniprogram/grid-item/grid-item",
     "t-divider": "tdesign-miniprogram/divider/divider",
     "t-back-top": "tdesign-miniprogram/back-top/back-top",
-    "t-image-viewer": "tdesign-miniprogram/image-viewer/image-viewer"
+    "t-image-viewer": "tdesign-miniprogram/image-viewer/image-viewer",
+    "t-cell": "tdesign-miniprogram/cell/cell",
+    "t-switch": "tdesign-miniprogram/switch/switch"
     
   }
 }

@@ -1,5 +1,8 @@
 {
   "dependencies": {
+    "bytes": "^3.1.2",
+    "dayjs": "^1.11.13",
+    "md5": "^2.3.0",
     "tdesign-miniprogram": "^1.8.6"
   }
 }

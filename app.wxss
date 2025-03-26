@@ -1,4 +1,68 @@
 @import 'miniprogram_npm/tdesign-miniprogram/common/style/theme/_index.wxss';
+
+page{
+  --wx-bg-color: #f3f3f3;
+}
 .container{
+  min-height: 100vh;
   padding-bottom: 100rpx;
+  background-color: var(--wx-bg-color);
+  box-sizing: border-box;
+}
+
+.margin0{
+  margin: 0 !important;
+}
+.none{
+  display: none
+}
+.flex{
+  display: flex;
+}
+.jsb{
+  justify-content: space-between;
+}
+.d-form-item {
+  --td-input-align-items:start;
+  background-color: var(--td-input-bg-color, var(--td-bg-color-container, var(--td-font-white-1, #ffffff)));
+  display: flex;
+  align-items: var(--td-input-align-items, center);
+  flex: 1;
+  padding: var(--td-input-vertical-padding, 32rpx);
+  overflow: hidden;
+  /* border-bottom: 1rpx solid #e7e7e7; */
+  position: relative;
+}
+.d-form-item::after{
+  position: absolute;
+  box-sizing: border-box;
+  content: ' ';
+  pointer-events: none;
+  right: 0;
+  left: 0;
+  bottom: 0;
+  border-bottom: var(--td-cell-border-width, 1px) solid var(--td-cell-border-color, #e7e7e7);
+  transform: scaleY(0.5);
+  transform-origin: bottom;
+  right: var(--td-cell-border-right-space, 0);
+}
+.d-form-item .t-input,.d-form-item .t-textarea{
+  padding: 0;
+}
+.d-label{
+  --td-spacer-2:16rpx;
+  display: flex;
+  width: var(--td-input-label-max-width, 4.5em);
+  font-size: var(--td-font-size-m, 32rpx);
+  line-height: 48rpx;
+  color: var(--td-input-label-text-color, var(--td-text-color-primary, var(--td-font-gray-1, rgba(0, 0, 0, 0.9))));
+  margin-right: var(--td-spacer-2, 16rpx);
+  word-wrap: break-word;
+}
+
+@media (prefers-color-scheme: dark) {
+  page{
+    --wx-bg-color:#191919;
+    --td-cell-border-color:#383838;
+  }
 }

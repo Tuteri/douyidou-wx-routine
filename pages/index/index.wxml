@@ -2,19 +2,22 @@
   <t-toast id="t-toast" />
   <t-notice-bar visible="{{true}}" prefixIcon="{{false}}" theme="success">
     <view slot="content">
-      <view>1.本小程序永久提供免费解析服务,如果大家使用下来觉得还不错的可以右上角分享给自己的朋友。</view>
-      <view>2.单次下载最多200MB，如果无法下载请复制链接到浏览器下载</view>
-      <view>3.仅供学习和测试，请勿用于商业用途</view>
-      <view>4.支持10+平台，反馈邮箱2462774332@qq.com</view>
+      <rich-text nodes="{{config.notice}}"/>
     </view>
   </t-notice-bar>
-
-  <t-textarea t-class="external-class" label="视频链接" placeholder="粘贴视频短链接到这里" maxlength="500" indicator bind:change="onChange" value="{{videoUrl}}" />
-  <!-- <button class="cu-tag line-green" wx:if="{{!shortVideoUrl}}" bindtap="copy">手动粘贴</button> -->
-
-  <view class="button-example">
-    <t-button theme="light" block size="large" t-class="group-btn" bind:tap="paste">一键粘贴</t-button>
-    <t-button theme="primary" block size="large" t-class="group-btn" bind:tap="submit">一键去水印</t-button>
+  <view class="d-form-item flex jsb">
+    <view class="d-label">自动粘贴</view>
+    <t-switch slot="note" value="{{autoPaste}}" bind:change="onAutoPaste"/>
+  </view>
+  <view class="d-form-item">
+    <view class="d-label">视频链接</view>
+    <t-textarea t-class="external-class" placeholder="粘贴视频短链接到这里" maxlength="1000" indicator bind:change="onChange" value="{{videoUrl}}" />
+  </view>
+  <view class="d-form-item">
+    <view class="btns">
+      <t-button theme="light" block size="large" t-class="group-btn" bind:tap="paste">一键粘贴</t-button>
+      <t-button theme="primary" block size="large" t-class="group-btn" bind:tap="submit">一键解析</t-button>
+    </view>
   </view>
   <view wx:if="{{(parseData.type == 'video' || parseData.type == 'slides') && parseData.video.length>0}}">
     <t-divider content="视频（{{parseData.video.length}}）" />

@@ -1,16 +1,49 @@
 {
   "pages": [
     "pages/index/index",
-    "pages/help/help"
+    "pages/help/help",
+    "pages/mine/mine",
+    "pages/more/more",
+    "pages/tools/transcode/index/index",
+    "pages/tools/transcode/submit/submit",
+    "pages/tools/transcode/info/info",
+    "pages/tools/hash/index/index"
   ],
   "window": {
     "navigationBarTitleText": "抖一抖去水印提取",
     "navigationBarBackgroundColor": "@navBgColor",
     "navigationBarTextStyle": "@navTxtStyle"
   },
+  "tabBar": {
+    "color": "@tabFontColor",
+    "selectedColor": "@tabSelectedColor",
+    "backgroundColor": "@tabBgColor",
+    "borderStyle": "@tabBorderStyle",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "text": "首页",
+        "iconPath": "@iconPath1",
+        "selectedIconPath": "@selectedIconPath1"
+      },
+      {
+        "pagePath": "pages/more/more",
+        "text": "工具",
+        "iconPath": "@iconPath2",
+        "selectedIconPath": "@selectedIconPath2"
+      },
+      {
+        "pagePath": "pages/mine/mine",
+        "text": "我的",
+        "iconPath": "@iconPath3",
+        "selectedIconPath": "@selectedIconPath3"
+      }
+    ]
+  },
   "usingComponents": {
+    "t-icon": "tdesign-miniprogram/icon/icon"
   },
   "sitemapLocation": "sitemap.json",
   "darkmode": true,
-  "themeLocation":"theme.json"
+  "themeLocation": "theme.json"
 }

@@ -1,0 +1,19 @@
+
+.box {
+  height: 100vh;
+  padding-bottom: 100rpx;
+  box-sizing: border-box;
+}
+.skeleton{
+  background-color: var(--wx-bg-color);
+  padding: 32rpx;
+  height: 100%;
+}
+.button-example{
+  /* padding: 32rpx; */
+  display: flex;
+  justify-content: space-between;
+  gap: 32rpx;
+  width: 100%;
+  box-sizing: border-box;
+}

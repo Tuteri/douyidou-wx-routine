@@ -1,12 +1,14 @@
 //index.js
 //获取应用实例
 const app = getApp();
-const request = require('../../utils/request.js');
+const parseApi = require('../../api/parse')
 import {
   Toast
 } from 'tdesign-miniprogram';
 Page({
   data: {
+    isLogin: false,
+    userInfo: null,
     videoUrl: '',
     videoTitle: '',
     isShow: false,
@@ -20,8 +22,37 @@ Page({
     videoDownloadTask: {},
     // 图片下载中Task
     imageDownloadTask: {},
+    autoPaste:false,//自动粘贴
+    config:{
+      notice:""
+    },
   },
-
+  onLoad() {
+    app.init().then(() => {
+      const config = app.globalData.config;
+      // 组合公告结构
+      let notice = config.notice.split("\n");
+      notice = notice.map(item=>{
+        return `<div>${item}</div>`;
+      }).join("")
+      config.notice = notice;
+      this.setData({
+        isLogin: app.globalData.isLogin,
+        userInfo: app.globalData.userInfo,
+        config,
+      })
+    })
+  },
+  onShow(){
+    // 实现自动粘贴
+    const autoPaste = wx.getStorageSync('autoPaste')
+    if(autoPaste){
+      this.paste();
+      this.setData({
+        autoPaste,
+      })
+    }
+  },
   showImageViewer(e) {
     this.setData({
       imagesViewer: (e.currentTarget.dataset.type == "1") ? this.data.parseData.images : [this.data.parseData.cover],
@@ -62,6 +93,13 @@ Page({
       }
     })
   },
+  // 一键粘贴开关
+  onAutoPaste(e){
+    wx.setStorageSync('autoPaste', e.detail.value)
+    this.setData({
+      autoPaste:e.detail.value
+    })
+  },
   // 一键解析
   submit: function () {
     this.setData({
@@ -69,6 +107,11 @@ Page({
     })
     if (this.regUrl(this.data.videoUrl)) {
       this.parseVideo();
+      if (this.isLogin) {} else {
+        app.onLogin(() => {
+          this.parseVideo();
+        });
+      }
     } else {
       this.showToast("视频链接不正确")
     }
@@ -80,7 +123,7 @@ Page({
     var params = {
       url: this.extractUrl(this.data.videoUrl)
     };
-    request.requestGetApi(app.globalData.url + "/api/videoParse/index", params, this, function (res) {
+    parseApi.url(params).then(res => {
       console.log(res)
       if (res.code != 200) {
         that.showToast('解析失败请检查链接正确性,或重试一次')
@@ -91,8 +134,9 @@ Page({
           },
         })
       }
-    }, function (res) {
-      console.error(res)
+    }).catch(err => {
+      console.error(err)
+      this.showToast('不支持的视频类型')
     })
   },
   showToast: function (text) {
@@ -129,7 +173,7 @@ Page({
           })
         },
         fail: (res) => {
-          that.showToast("网络超时 请复制链接到浏览器下载")
+          that.showToast("下载失败 请复制链接到浏览器下载")
         }
       })
     })
@@ -164,6 +208,17 @@ Page({
   // 保存视频
   saveVideo: function (e) {
     let that = this;
+    const index = e.currentTarget.dataset.index;
+    let curVideoDownloadTask = this.data.videoDownloadTask[index]
+    // 正在下载中，终止下载
+    if (curVideoDownloadTask && curVideoDownloadTask.action) {
+      let downloadTask = curVideoDownloadTask.downloadTask;
+      downloadTask.abort();
+      this.setData({
+        [`videoDownloadTask[${index}]`]: null,
+      })
+      return;
+    }
     this.openSetting(() => {
       const downloadTask = wx.downloadFile({
         url: e.currentTarget.dataset.text,
@@ -181,10 +236,9 @@ Page({
           })
         },
         fail: (res) => {
-          that.showToast("网络超时 请复制链接到浏览器下载")
+          that.showToast("下载失败 请复制链接到浏览器下载")
         }
       })
-      const index = e.currentTarget.dataset.index;
       this.setData({
         [`videoDownloadTask[${index}]`]: {
           downloadTask,
