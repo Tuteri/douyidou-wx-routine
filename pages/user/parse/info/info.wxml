@@ -10,7 +10,7 @@
     </t-notice-bar>
     <t-cell title="{{info.text}}" description="保存失败时请复制链接到浏览器打开" note="{{info.createFromNow}}" hover />
     <view class="d-form-item">
-      <view class="d-label">原视频</view>
+      <view class="d-label">解析链接</view>
       <t-textarea t-class="external-class" autosize="{{ { maxHeight: 70, minHeight: 20 } }}" value="{{info.url}}" />
     </view>
     <view class="d-form-item">
@@ -18,10 +18,11 @@
       <t-textarea t-class="external-class" autosize="{{ { maxHeight: 140, minHeight: 20 } }}" value="{{info.textOrigin||info.text}}" />
     </view>
     <view class="button-example">
-      <t-button size="small" bind:tap="copyText" data-text="{{info.url}}" block>复制原视频</t-button>
+      <t-button size="small" bind:tap="copyText" data-text="{{info.url}}" block>复制原链接</t-button>
       <t-button size="small" bind:tap="copyText" data-text="{{info.textOrigin||info.text}}" block>复制文案</t-button>
     </view>
-    <view wx:if="{{(info.type == 'video' || info.type == 'slides') && info.video.length>0}}">
+
+    <view wx:if="{{info.video.length>0}}">
       <t-divider content="视频（{{info.video.length}}）" />
       <t-grid class="block" column="{{1}}" theme="card" gutter="32">
         <t-grid-item wx:for="{{info.video}}" wx:key="index">
@@ -43,9 +44,9 @@
         </t-grid-item>
       </t-grid>
     </view>
+    
 
-
-    <view wx:if="{{(info.type == 'note' || info.type == 'slides') && info.images.length>0}}">
+    <view wx:if="{{info.images.length>0}}">
       <t-divider content="图集（{{info.images.length}}）" />
       <t-grid class="block" column="{{2}}" theme="card" gutter="32">
         <t-grid-item wx:for="{{info.images}}" wx:key="index">
@@ -57,7 +58,28 @@
         </t-grid-item>
       </t-grid>
     </view>
-
+    <view wx:if="{{info.audio.length>0}}">
+      <t-divider content="音频（{{info.audio.length}}）" />
+      <t-grid class="block" column="{{1}}" theme="card" gutter="32">
+        <t-grid-item wx:for="{{info.audio}}" wx:key="index">
+          <video src="{{item}}" data-index="{{index}}" style="width: 100%;height:200rpx" />
+          <view class="button-example image-btns">
+            <t-button t-class="group-btn" size="small" bind:tap="saveAudio" data-index="{{index}}" data-text="{{info.proxy.audio[index]}}" block>
+              <block wx:if="{{audioDownloadTask[index]}}">
+                <block wx:if="{{audioDownloadTask[index].action}}">
+                  下载中 {{audioDownloadTask[index].progress}}%
+                </block>
+                <block wx:else>
+                  下载完成
+                </block>
+              </block>
+              <block wx:else>下载音频</block>
+            </t-button>
+            <t-button t-class="group-btn" size="small" bind:tap="copyText" data-text="{{item}}" block>复制链接</t-button>
+          </view>
+        </t-grid-item>
+      </t-grid>
+    </view>
     <view wx:if="{{info.cover}}">
       <t-divider content="封面" />
       <t-grid class="block" column="{{2}}" theme="card">

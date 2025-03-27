@@ -1,5 +1,5 @@
 const parseApi = require("../../../../api/parse")
-
+const app = getApp();
 const {
   dayjs,
   openSetting,
@@ -64,16 +64,21 @@ Page({
     curIndex: 0,
     // 视频下载中Task
     videoDownloadTask: {},
+    // 音频下载中Task
+    audioDownloadTask: {},
     // 图片下载中Task
     imageDownloadTask: {},
+    isMobile:true,
   },
 
   /**
    * 生命周期函数--监听页面加载
    */
   onLoad(options) {
+    
     this.setData({
-      id: options.id
+      id: options.id,
+      isMobile:app.globalData.isMobile,
     })
   },
   onShow(){
@@ -161,10 +166,14 @@ Page({
             },
             fail(res) {
               wx.showToast({title:"保存失败",icon:"none"})
+              this.setData({
+                [`videoDownloadTask[${index}]`]: null,
+              })
             }
           })
         },
         fail: (res) => {
+          console.log(res);
           wx.showToast({title:"下载失败",icon:"none"})
         }
       })
@@ -189,6 +198,90 @@ Page({
         }
       })
     })
+
+
+  },
+   // 保存音频
+   saveAudio: function (e) {
+    let that = this;
+    const index = e.currentTarget.dataset.index;
+    let curAudioDownloadTask = this.data.audioDownloadTask[index]
+    // 正在下载中，终止下载
+    if (curAudioDownloadTask && curAudioDownloadTask.action) {
+      let downloadTask = curAudioDownloadTask.downloadTask;
+      downloadTask.abort();
+      this.setData({
+        [`audioDownloadTask[${index}]`]: null,
+      })
+      return;
+    }
+    // openSetting().then(res => {
+      const downloadTask = wx.downloadFile({
+        url: e.currentTarget.dataset.text,
+        useHighPerformanceMode: true,
+        timeout: 1800000,
+        success: (res) => {
+          const fs = wx.getFileSystemManager()
+          if(this.data.isMobile){
+            fs.saveFile({
+              tempFilePath: res.tempFilePath,
+              filePath: `${wx.env.USER_DATA_PATH}/${new Date().getTime()}.mp3`, // 自定义路径
+              success(res) {
+                console.log(res)
+                wx.showToast({title:"保存成功 路径 "+res.savedFilePath,icon:"none",duration:4000})
+              },
+              fail(res) {
+                console.log(res)
+                wx.showToast({title:"保存失败",icon:"none"})
+                that.setData({
+                  [`audioDownloadTask[${index}]`]: null,
+                })
+              }
+            })
+          }else{
+            wx.saveFileToDisk({
+              filePath: res.tempFilePath,
+              success(res) {
+                console.log(res)
+                wx.showToast({title:"保存成功",icon:"none"})
+              },
+              fail(res) {
+                console.log(res)
+                wx.showToast({title:"保存失败",icon:"none"})
+                that.setData({
+                  [`audioDownloadTask[${index}]`]: null,
+                })
+              }
+            })
+          }
+          
+        },
+        fail: (res) => {
+          console.log(res);
+          wx.showToast({title:"下载失败",icon:"none"})
+        }
+      })
+      this.setData({
+        [`audioDownloadTask[${index}]`]: {
+          downloadTask,
+          progress: 0,
+          action: true,
+        }
+      })
+      // 下载进度
+      downloadTask.onProgressUpdate((res) => {
+        // let progress = res.progress || 100;
+        this.setData({
+          [`audioDownloadTask[${index}].progress`]: res.progress,
+        })
+        console.log(res.progress);
+        if (res.progress == 100) {
+          this.setData({
+            [`audioDownloadTask[${index}].action`]: false,
+          })
+        }
+      })
+    // })
 
 
   },

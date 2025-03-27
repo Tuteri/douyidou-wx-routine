@@ -7,8 +7,14 @@ App({
     userInfo: null,
     init: false,
     config: null,
+    isMobile:true,
   },
   onLaunch() {
+    const systemInfo = wx.getDeviceInfo();
+    if (systemInfo.platform === 'windows' || systemInfo.platform === 'mac') {
+      this.globalData.isMobile = false
+    }
+
     console.log("onLaunch")
     // 获取小程序更新机制兼容
     if (wx.canIUse('getUpdateManager')) {
