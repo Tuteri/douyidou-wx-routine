@@ -1,0 +1,12 @@
+.refresh{
+  height: 100%;
+}
+.box {
+  min-height: calc(80vh);
+  padding-bottom: 200rpx;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+.t-empty{
+  height: 100%;
+}

@@ -7,6 +7,12 @@ const BASE_URL = '/parse';
 const url = (data) => {
   return api.get(BASE_URL + "/url", data);
 };
+const urlList = (data) => {
+  return api.get(BASE_URL + "/url/list", data);
+};
+const urlInfo = (data) => {
+  return api.get(BASE_URL + "/url/info", data);
+};
 const transcode = (data) =>{
   return api.post(BASE_URL + "/transcode", data);
 }
@@ -28,6 +34,8 @@ const transcodeStats = (data) =>{
 // 导出所有方法
 module.exports = {
   url,
+  urlList,
+  urlInfo,
   transcode,
   videoMd5,
   videoToMp3,

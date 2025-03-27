@@ -19,54 +19,5 @@
       <t-button theme="primary" block size="large" t-class="group-btn" bind:tap="submit">一键解析</t-button>
     </view>
   </view>
-  <view wx:if="{{(parseData.type == 'video' || parseData.type == 'slides') && parseData.video.length>0}}">
-    <t-divider content="视频（{{parseData.video.length}}）" />
-    <t-grid class="block" column="{{1}}" theme="card" gutter="32">
-      <t-grid-item wx:for="{{parseData.video}}" wx:key="index">
-        <video src="{{item}}" data-type="1" data-index="{{index}}" style="width: 100%;" />
-        <view class="button-example image-btns">
-          <t-button t-class="group-btn" size="small" bind:tap="saveVideo" data-index="{{index}}" data-text="{{parseData.proxy.video[index]}}" block>
-            <block wx:if="{{videoDownloadTask[index]}}">
-              <block wx:if="{{videoDownloadTask[index].action}}">
-                下载中 {{videoDownloadTask[index].progress}}%
-              </block>
-              <block wx:else>
-                下载完成
-              </block>
-            </block>
-            <block wx:else>下载视频</block>
-          </t-button>
-          <t-button t-class="group-btn" size="small" bind:tap="copyText" data-text="{{item}}" block>复制链接</t-button>
-        </view>
-      </t-grid-item>
-    </t-grid>
-  </view>
-
-
-  <view wx:if="{{(parseData.type == 'note' || parseData.type == 'slides') && parseData.images.length>0}}">
-    <t-divider content="图集（{{parseData.images.length}}）" />
-    <t-grid class="block" column="{{2}}" theme="card" gutter="32">
-      <t-grid-item wx:for="{{parseData.images}}" wx:key="index">
-        <t-image src="{{item}}" mode="aspectFill" width="200" height="220" webp="{{true}}" bind:tap="showImageViewer" data-type="1" data-index="{{index}}" />
-        <view class="button-example image-btns">
-          <t-button size="extra-small" bind:tap="saveImage" data-index="{{index}}" data-text="{{parseData.proxy.images[index]}}" block>下载图片</t-button>
-          <t-button size="extra-small" bind:tap="copyText" data-text="{{item}}" block>复制链接</t-button>
-        </view>
-      </t-grid-item>
-    </t-grid>
-  </view>
-
-  <view wx:if="{{parseData.cover}}">
-    <t-divider content="封面" />
-    <t-grid class="block" column="{{2}}" theme="card">
-      <t-grid-item>
-        <t-image src="{{parseData.cover}}" mode="aspectFit" width="200" height="220" webp="{{true}}" bind:tap="showImageViewer" data-type="0" data-index="0" />
-        <view class="button-example image-btns">
-          <t-button size="extra-small" bind:tap="saveImage" data-index="{{index}}" data-text="{{parseData.proxy.cover}}" block>下载图片</t-button>
-          <t-button size="extra-small" bind:tap="copyText" data-text="{{parseData.cover}}" block>复制链接</t-button>
-        </view>
-      </t-grid-item>
-    </t-grid>
-  </view>
-  <t-image-viewer closeBtn="{{true}}" showIndex="{{true}}" initial-index="{{curIndex}}" visible="{{visible}}" images="{{imagesViewer}}" bind:close="closeImageViewer" />
+  
 </view>

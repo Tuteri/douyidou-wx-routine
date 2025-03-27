@@ -1,9 +1,9 @@
 <view class="container">
   <!-- 个人信息 -->
-  <view class="header" bindtap="onLogin">
-    <t-avatar t-class="t-class-icon" class="avatar" size="medium"  icon="user"></t-avatar>
+  <view class="header">
+    <t-avatar t-class="t-class-icon" class="avatar" size="medium" icon="user"></t-avatar>
     <view class="info">
-      <view class="nickname">{{isLogin ? userInfo.wxName : "点击这里登录"}}</view>
+      <view class="nickname">{{isLogin ? userInfo.wxName : ""}}</view>
       <view class="username" wx:if="{{isLogin}}">用户名：{{userInfo.username || '未设置'}}</view>
     </view>
   </view>
@@ -11,8 +11,9 @@
   <!-- 菜单 -->
   <view class="menu">
     <t-cell-group theme="card">
-      <t-cell title="修改密码（网页版）" arrow bindtap="editPassword"></t-cell>
-    <t-cell title="敬请期待"></t-cell>
+      <t-cell title="解析历史" arrow  url="/pages/user/parse/list/list"></t-cell>
+      <!-- <t-cell title="修改密码（网页版）" arrow bindtap="editPassword"></t-cell>
+      <t-cell title="敬请期待"></t-cell> -->
     </t-cell-group>
   </view>
 </view>

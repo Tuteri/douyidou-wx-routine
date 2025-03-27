@@ -1,0 +1,31 @@
+page {
+  --td-grid-bg-color: transparent;
+  --td-grid-item-bg-color: transparent;
+}
+.skeleton{
+  background-color: var(--wx-bg-color);
+  padding: 32rpx;
+  height: 100%;
+}
+.button-example{
+  padding: 32rpx;
+  display: flex;
+  justify-content: space-between;
+  gap: 32rpx;
+  width: 100%;
+  box-sizing: border-box;
+}
+.image-btns{
+  width: 100%;
+  padding: 0;
+  padding-top: 32rpx;
+  /* gap: 16rpx; */
+}
+
+.external-class{
+  flex: 1;
+  /* height:100rpx; */
+}
+.t-grid-item__wrapper{
+  padding-top: 0 !important;
+}

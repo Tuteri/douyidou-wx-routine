@@ -12,7 +12,9 @@
     "pages/tools/video-md5/info/info",
     "pages/tools/video-to-mp3/submit/submit",
     "pages/tools/video-to-mp3/index/index",
-    "pages/tools/video-to-mp3/info/info"
+    "pages/tools/video-to-mp3/info/info",
+    "pages/user/parse/list/list",
+    "pages/user/parse/info/info"
   ],
   "window": {
     "navigationBarTitleText": "抖一抖去水印提取",
