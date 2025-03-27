@@ -2,3 +2,4 @@ miniprogram_npm/
 # Node.js
 node_modules/
 .txt
+config/config.js
