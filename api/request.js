@@ -6,6 +6,7 @@ const {
 let queue = Promise.resolve(); // 初始化一个已经解析的 Promise，作为起始点
 
 const request = (url, method = "GET", data = {}, headers = {}) => {
+  console.log(url);
   queue = queue.then(() => {
     return new Promise((resolve, reject) => {
       let token = wx.getStorageSync("token");
@@ -42,6 +43,9 @@ const request = (url, method = "GET", data = {}, headers = {}) => {
         },
       });
     });
+  }).catch((err) => {
+    console.log("request catch")
+    return Promise.resolve(); // 确保 queue 继续执行
   });
   return queue;
 }
