@@ -1,9 +1,4 @@
 miniprogram_npm/
 # Node.js
 node_modules/
-<<<<<<< HEAD
 .txt
-config.js
-=======
-.txt
->>>>>>> 6dce575771d98ac1c3aeffae7edf6a302bd59ff6
