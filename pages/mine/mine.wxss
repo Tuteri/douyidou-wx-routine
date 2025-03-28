@@ -48,6 +48,14 @@
 .t-cell-group--card{
   margin: 0 !important;
 }
+.menu button::after{
+  border: 0;
+}
+.menu button{
+  border-radius: none;
+  color: unset;
+  background-color: unset;
+}
 /* 适配深色模式 */
 @media (prefers-color-scheme: dark) {
   .mine-page {

@@ -20,7 +20,6 @@
     </view>
   </view>
   <view class="link-example">
-    <t-link size="small" theme="primary" content="解析历史记录" underline suffixIcon="jump" hover navigatorProps="{{ {url:'/pages/user/parse/list/list'} }}"/>
+    <t-link size="large" theme="primary" content="解析历史记录" underline suffixIcon="jump" hover navigatorProps="{{ {url:'/pages/user/parse/list/list'} }}"/>
   </view>
-
 </view>

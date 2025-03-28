@@ -1,9 +1,13 @@
+import Toast, {
+  hideToast
+} from 'tdesign-miniprogram/toast/index';
 const parseApi = require("../../../../api/parse")
 const app = getApp();
 const {
   dayjs,
   openSetting,
 } = require('../../../../utils/util')
+const saveAllTaskQueue = [1, 2, 3];
 Page({
 
   /**
@@ -68,20 +72,28 @@ Page({
     audioDownloadTask: {},
     // 图片下载中Task
     imageDownloadTask: {},
-    isMobile:true,
+    isMobile: true,
+    scrollTop: 0,
+    saveAllTask: {
+      downloadTaskList: null,
+      totalTask: 0,
+      doneTask: 0,
+      successTask: 0,
+      errorTask: 0,
+    }
   },
 
   /**
    * 生命周期函数--监听页面加载
    */
   onLoad(options) {
-    
+
     this.setData({
       id: options.id,
-      isMobile:app.globalData.isMobile,
+      isMobile: app.globalData.isMobile,
     })
   },
-  onShow(){
+  onShow() {
     this.getInfo().then(res => {
       this.setData({
         showSkeleton: false,
@@ -106,16 +118,7 @@ Page({
       })
     })
   },
-  onRefresh() {
-    this.setData({
-      enable: true
-    });
-    this.getInfo().then(res => {
-      this.setData({
-        enable: false
-      });
-    })
-  },
+  // 保存图片
   saveImage: function (e) {
     let that = this;
     openSetting().then(() => {
@@ -126,20 +129,30 @@ Page({
           wx.saveImageToPhotosAlbum({
             filePath: res.tempFilePath,
             success(res) {
-              wx.showToast({title:"保存成功",icon:"none"})
+              wx.showToast({
+                title: "保存成功",
+                icon: "none"
+              })
             },
             fail(res) {
-              wx.showToast({title:"保存失败",icon:"none"})
+              wx.showToast({
+                title: "保存失败",
+                icon: "none"
+              })
             }
           })
         },
         fail: (res) => {
-          wx.showToast({title:"下载失败",icon:"none"})
+          wx.showToast({
+            title: "下载失败",
+            icon: "none"
+          })
         }
       })
     })
 
-  }, // 保存视频
+  },
+  // 保存视频
   saveVideo: function (e) {
     let that = this;
     const index = e.currentTarget.dataset.index;
@@ -162,11 +175,17 @@ Page({
           wx.saveVideoToPhotosAlbum({
             filePath: res.tempFilePath,
             success(res) {
-              wx.showToast({title:"保存成功",icon:"none"})
+              wx.showToast({
+                title: "保存成功",
+                icon: "none"
+              })
             },
             fail(res) {
-              wx.showToast({title:"保存失败",icon:"none"})
-              this.setData({
+              wx.showToast({
+                title: "保存失败",
+                icon: "none"
+              })
+              that.setData({
                 [`videoDownloadTask[${index}]`]: null,
               })
             }
@@ -174,7 +193,10 @@ Page({
         },
         fail: (res) => {
           console.log(res);
-          wx.showToast({title:"下载失败",icon:"none"})
+          wx.showToast({
+            title: "下载失败",
+            icon: "none"
+          })
         }
       })
       this.setData({
@@ -201,8 +223,8 @@ Page({
 
 
   },
-   // 保存音频
-   saveAudio: function (e) {
+  // 保存音频
+  saveAudio: function (e) {
     let that = this;
     const index = e.currentTarget.dataset.index;
     let curAudioDownloadTask = this.data.audioDownloadTask[index]
@@ -216,74 +238,228 @@ Page({
       return;
     }
     // openSetting().then(res => {
-      const downloadTask = wx.downloadFile({
-        url: e.currentTarget.dataset.text,
-        useHighPerformanceMode: true,
-        timeout: 1800000,
-        success: (res) => {
-          const fs = wx.getFileSystemManager()
-          if(this.data.isMobile){
-            fs.saveFile({
-              tempFilePath: res.tempFilePath,
-              filePath: `${wx.env.USER_DATA_PATH}/${new Date().getTime()}.mp3`, // 自定义路径
-              success(res) {
-                console.log(res)
-                wx.showToast({title:"保存成功 路径 "+res.savedFilePath,icon:"none",duration:4000})
-              },
-              fail(res) {
-                console.log(res)
-                wx.showToast({title:"保存失败",icon:"none"})
-                that.setData({
-                  [`audioDownloadTask[${index}]`]: null,
-                })
-              }
-            })
-          }else{
-            wx.saveFileToDisk({
-              filePath: res.tempFilePath,
-              success(res) {
-                console.log(res)
-                wx.showToast({title:"保存成功",icon:"none"})
-              },
-              fail(res) {
-                console.log(res)
-                wx.showToast({title:"保存失败",icon:"none"})
-                that.setData({
-                  [`audioDownloadTask[${index}]`]: null,
-                })
-              }
-            })
-          }
-          
-        },
-        fail: (res) => {
-          console.log(res);
-          wx.showToast({title:"下载失败",icon:"none"})
-        }
-      })
-      this.setData({
-        [`audioDownloadTask[${index}]`]: {
-          downloadTask,
-          progress: 0,
-          action: true,
-        }
-      })
-      // 下载进度
-      downloadTask.onProgressUpdate((res) => {
-        // let progress = res.progress || 100;
-        this.setData({
-          [`audioDownloadTask[${index}].progress`]: res.progress,
-        })
-        console.log(res.progress);
-        if (res.progress == 100) {
-          this.setData({
-            [`audioDownloadTask[${index}].action`]: false,
+    const downloadTask = wx.downloadFile({
+      url: e.currentTarget.dataset.text,
+      useHighPerformanceMode: true,
+      timeout: 1800000,
+      success: (res) => {
+        const fs = wx.getFileSystemManager()
+        if (this.data.isMobile) {
+          fs.saveFile({
+            tempFilePath: res.tempFilePath,
+            filePath: `${wx.env.USER_DATA_PATH}/${new Date().getTime()}.mp3`, // 自定义路径
+            success(res) {
+              console.log(res)
+              wx.showToast({
+                title: "保存成功 路径 " + res.savedFilePath,
+                icon: "none",
+                duration: 4000
+              })
+            },
+            fail(res) {
+              console.log(res)
+              wx.showToast({
+                title: "保存失败",
+                icon: "none"
+              })
+              that.setData({
+                [`audioDownloadTask[${index}]`]: null,
+              })
+            }
+          })
+        } else {
+          wx.saveVideoToPhotosAlbum({
+            filePath: res.tempFilePath,
+            success(res) {
+              console.log(res)
+              wx.showToast({
+                title: "保存成功",
+                icon: "none"
+              })
+            },
+            fail(res) {
+              console.log(res)
+              wx.showToast({
+                title: "保存失败",
+                icon: "none"
+              })
+              that.setData({
+                [`audioDownloadTask[${index}]`]: null,
+              })
+            }
           })
         }
+
+      },
+      fail: (res) => {
+        console.log(res);
+        wx.showToast({
+          title: "下载失败",
+          icon: "none"
+        })
+      }
+    })
+    this.setData({
+      [`audioDownloadTask[${index}]`]: {
+        downloadTask,
+        progress: 0,
+        action: true,
+      }
+    })
+    // 下载进度
+    downloadTask.onProgressUpdate((res) => {
+      // let progress = res.progress || 100;
+      this.setData({
+        [`audioDownloadTask[${index}].progress`]: res.progress,
       })
+      console.log(res.progress);
+      if (res.progress == 100) {
+        this.setData({
+          [`audioDownloadTask[${index}].action`]: false,
+        })
+      }
+    })
     // })
 
 
+  },
+  // 
+  initSaveAllTask(t=0) {
+    saveAllTaskQueue.length = 0;
+    this.setData({
+      saveAllTask: {
+        downloadTaskList: null,
+        totalTask: t,
+        doneTask: 0,
+        successTask: 0,
+        errorTask: 0,
+      }
+    })
+  },
+  // 保存图集全部
+  saveImageAll(){
+    let that = this;
+    this.initSaveAllTask(this.data.info.proxy.images.length);
+    openSetting().then(() => {
+      Toast({
+        context: this,
+        selector: '#t-toast',
+        duration: -1,
+        theme: "loading",
+        direction:'column',
+      });
+      this.data.info.proxy.images.forEach(item => {
+        const task = () => {
+          return new Promise(resolve => {
+            wx.downloadFile({
+              url: item,
+              useHighPerformanceMode: true,
+              success: (res) => {
+                wx.saveImageToPhotosAlbum({
+                  filePath: res.tempFilePath,
+                  success(res) {
+                    that.setData({
+                      ["saveAllTask.successTask"]: that.data.saveAllTask.successTask + 1,
+                      ["saveAllTask.doneTask"]: that.data.saveAllTask.doneTask + 1
+                    })
+                    resolve();
+                  },
+                  fail(res) {
+                    that.setData({
+                      ["saveAllTask.errorTask"]: that.data.saveAllTask.errorTask + 1,
+                      ["saveAllTask.doneTask"]: that.data.saveAllTask.doneTask + 1
+                    })
+                    resolve();
+                  }
+                })
+              },
+              fail: (res) => {
+                that.setData({
+                  ["saveAllTask.errorTask"]: that.data.saveAllTask.errorTask + 1,
+                  ["saveAllTask.doneTask"]: that.data.saveAllTask.doneTask + 1
+                })
+                resolve();
+              }
+            })
+          })
+        }
+        saveAllTaskQueue.push(task);
+      });
+      this.runSaveAllTask();
+    })
+  },
+  runSaveAllTask() {
+    if (saveAllTaskQueue.length === 0) {
+      hideToast({
+        context: this,
+        selector: '#t-toast',
+      });
+      wx.showToast({
+        title: '保存成功',
+        icon: 'none',
+      })
+      return Promise.resolve();
+    }
+    const task = saveAllTaskQueue.shift(); // 取出第一个任务
+    return task().then(() => this.runSaveAllTask(saveAllTaskQueue)); // 递归执行下一个
+  },
+  // 保存视频全部
+  saveVideoAll(){
+    let that = this;
+    this.initSaveAllTask(this.data.info.proxy.video.length);
+    openSetting().then(() => {
+      Toast({
+        context: this,
+        selector: '#t-toast',
+        duration: -1,
+        theme: "loading",
+        direction:'column',
+      });
+      this.data.info.proxy.video.forEach(item => {
+        const task = () => {
+          return new Promise(resolve => {
+            wx.downloadFile({
+              url: item,
+              useHighPerformanceMode: true,
+              success: (res) => {
+                wx.saveImageToPhotosAlbum({
+                  filePath: res.tempFilePath,
+                  success(res) {
+                    that.setData({
+                      ["saveAllTask.successTask"]: that.data.saveAllTask.successTask + 1,
+                      ["saveAllTask.doneTask"]: that.data.saveAllTask.doneTask + 1
+                    })
+                    resolve();
+                  },
+                  fail(res) {
+                    that.setData({
+                      ["saveAllTask.errorTask"]: that.data.saveAllTask.errorTask + 1,
+                      ["saveAllTask.doneTask"]: that.data.saveAllTask.doneTask + 1
+                    })
+                    resolve();
+                  }
+                })
+              },
+              fail: (res) => {
+                that.setData({
+                  ["saveAllTask.errorTask"]: that.data.saveAllTask.errorTask + 1,
+                  ["saveAllTask.doneTask"]: that.data.saveAllTask.doneTask + 1
+                })
+                resolve();
+              }
+            })
+          })
+        }
+        saveAllTaskQueue.push(task);
+      });
+      this.runSaveAllTask();
+    })
+  },
+  handleHide() {
+    hideToast({
+      context: this,
+      selector: '#t-toast',
+    });
   },
   copyText(e) {
     this.copy(e.currentTarget.dataset.text);
@@ -304,6 +480,11 @@ Page({
     this.setData({
       visible: false,
     });
+  },
+  onPageScroll(e) {
+    this.setData({
+      scrollTop: e.scrollTop,
+    })
   },
   /**
    * 生命周期函数--监听页面初次渲染完成

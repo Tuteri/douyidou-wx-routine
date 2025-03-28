@@ -25,9 +25,9 @@
         </t-cell>
         <view class="button-example image-btns" wx:if="{{info.stats == 2}}">
           <t-button t-class="group-btn" size="small" bind:tap="saveVideo"  block wx:if="{{allowDownload}}">
-            <block wx:if="{{videoDownloadTask}}">
-              <block wx:if="{{videoDownloadTask.action}}">
-                下载中 {{videoDownloadTask.progress}}%
+            <block wx:if="{{audioDownloadTask}}">
+              <block wx:if="{{audioDownloadTask.action}}">
+                下载中 {{audioDownloadTask.progress}}%
               </block>
               <block wx:else>
                 下载完成

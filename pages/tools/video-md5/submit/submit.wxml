@@ -6,7 +6,7 @@
   </view>
   <view class="d-form-item">
     <view class="d-label">视频地址*</view>
-    <t-textarea t-class="external-class" placeholder="请输入视频地址" maxlength="1000" disableDefaultPadding="{{true}}" indicator confirm-type="done" bindchange="onUrlInputChange" value="{{url}}"/>
+    <t-textarea t-class="external-class" placeholder="请输入视频地址（支持最大视频时长30分钟）" maxlength="1000" disableDefaultPadding="{{true}}" indicator confirm-type="done" bindchange="onUrlInputChange" value="{{url}}"/>
   </view>
   <view class="d-form-item">
     <t-button theme="primary" size="large" bindtap="onSubmit" block>提交任务</t-button>

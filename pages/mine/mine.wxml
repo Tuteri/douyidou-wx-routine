@@ -11,7 +11,10 @@
   <!-- 菜单 -->
   <view class="menu">
     <t-cell-group theme="card">
-      <t-cell title="解析历史" arrow  url="/pages/user/parse/list/list"></t-cell>
+      <t-cell title="解析历史" arrow hover url="/pages/user/parse/list/list"></t-cell>
+      <button class="btn pd0" open-type="feedback" block>
+        <t-cell title="意见反馈" arrow hover ></t-cell>
+      </button>
       <!-- <t-cell title="修改密码（网页版）" arrow bindtap="editPassword"></t-cell>
       <t-cell title="敬请期待"></t-cell> -->
     </t-cell-group>

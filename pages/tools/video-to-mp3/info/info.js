@@ -1,9 +1,8 @@
 const parseApi = require("../../../../api/parse")
 import bytes from 'bytes';
+const app = getApp();
 const {
   dayjs,
-  openSetting,
-  showToast
 } = require('../../../../utils/util')
 Page({
 
@@ -58,8 +57,9 @@ Page({
       }, ],
     ],
     showSkeleton: true,
-    videoDownloadTask: null,
-    allowDownload:false,
+    audioDownloadTask: null,
+    allowDownload: false,
+    isMobile:true,
   },
 
   /**
@@ -67,7 +67,8 @@ Page({
    */
   onLoad(options) {
     this.setData({
-      id: options.id
+      id: options.id,
+      isMobile:app.globalData.isMobile,
     })
     this.getInfo().then(res => {
       this.setData({
@@ -86,10 +87,9 @@ Page({
       res.data.doneFromNow = dayjs(res.data.doneTime).fromNow()
       res.data.size = bytes(res.data.size);
       const d = dayjs.duration(res.data.time, 'seconds');
-      res.data.timeText = `${String(d.minutes()).padStart(2, '0')}分${String(d.seconds()).padStart(2, '0')}秒`;
-  ;
+      res.data.timeText = `${String(d.minutes()).padStart(2, '0')}分${String(d.seconds()).padStart(2, '0')}秒`;;
       this.setData({
-        allowDownload:allowDownload,
+        allowDownload: allowDownload,
         info: res.data
       })
     })
@@ -107,67 +107,85 @@ Page({
   // 保存视频
   saveVideo: function (e) {
     let that = this;
-    let curVideoDownloadTask = this.data.videoDownloadTask;
+    let curAudioDownloadTask = this.data.audioDownloadTask;
     // 正在下载中，终止下载
-    console.log(curVideoDownloadTask)
-    if (curVideoDownloadTask && curVideoDownloadTask.action) {
-      let downloadTask = curVideoDownloadTask.downloadTask;
+    console.log(curAudioDownloadTask)
+    if (curAudioDownloadTask && curAudioDownloadTask.action) {
+      let downloadTask = curAudioDownloadTask.downloadTask;
       downloadTask.abort();
       this.setData({
         downloadTask: null,
       })
       return;
     }
-    openSetting().then(res => {
-      const downloadTask = wx.downloadFile({
-        url: this.data.info.downloadUrl,
-        useHighPerformanceMode: true,
-        timeout: 1800000,
-        success: (res) => {
-          wx.saveVideoToPhotosAlbum({
-            filePath: res.tempFilePath,
+    const downloadTask = wx.downloadFile({
+      url: this.data.info.downloadUrl,
+      useHighPerformanceMode: true,
+      timeout: 1800000,
+      success: (res) => {
+        const fs = wx.getFileSystemManager();
+        if(this.data.isMobile){
+          fs.saveFile({
+            tempFilePath: res.tempFilePath,
+            filePath: `${wx.env.USER_DATA_PATH}/${new Date().getTime()}.mp3`, // 自定义路径
             success(res) {
-              wx.showToast({
-                title:"保存成功",
-              })
+              console.log(res)
+              wx.showToast({title:"保存成功 路径 "+res.savedFilePath,icon:"none",duration:4000})
             },
             fail(res) {
-              wx.showToast({
-                title:"保存失败",
+              console.log(res)
+              wx.showToast({title:"保存失败",icon:"none"})
+              that.setData({
+                [`audioDownloadTask`]: null,
               })
             }
           })
-        },
-        fail: (res) => {
-          wx.showToast({
-            title:"下载失败",
-            icon:"none"
+        }else{
+          wx.saveVideoToPhotosAlbum({
+            filePath: res.tempFilePath,
+            success(res) {
+              console.log(res)
+              wx.showToast({title:"保存成功",icon:"none"})
+            },
+            fail(res) {
+              console.log(res)
+              wx.showToast({title:"保存失败",icon:"none"})
+              that.setData({
+                [`audioDownloadTask`]: null,
+              })
+            }
           })
-          this.setData({
-            [`videoDownloadTask.action`]: false,
-          })
-        },
-      })
-      this.setData({
-        videoDownloadTask: {
-          downloadTask,
-          progress: 0,
-          action: true,
         }
-      })
-      // 下载进度
-      downloadTask.onProgressUpdate((res) => {
-        // let progress = res.progress || 100;
-        this.setData({
-          [`videoDownloadTask.progress`]: res.progress,
+      },
+      fail: (res) => {
+        wx.showToast({
+          title: "下载失败",
+          icon: "none"
         })
-        console.log(res.progress);
-        if (res.progress == 100) {
-          this.setData({
-            [`videoDownloadTask.action`]: false,
-          })
-        }
+        this.setData({
+          [`audioDownloadTask.action`]: false,
+        })
+      },
+    })
+    this.setData({
+      audioDownloadTask: {
+        downloadTask,
+        progress: 0,
+        action: true,
+      }
+    })
+    // 下载进度
+    downloadTask.onProgressUpdate((res) => {
+      // let progress = res.progress || 100;
+      this.setData({
+        [`audioDownloadTask.progress`]: res.progress,
       })
+      console.log(res.progress);
+      if (res.progress == 100) {
+        this.setData({
+          [`audioDownloadTask.action`]: false,
+        })
+      }
     })
 
   },

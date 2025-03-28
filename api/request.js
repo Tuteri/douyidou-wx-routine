@@ -28,10 +28,10 @@ const request = (url, method = "GET", data = {}, headers = {}) => {
             refreshAccessToken()
               .then(() => {
                 // 刷新成功后重试队列中的所有请求
-                resolve()
+                resolve(res.data)
               })
               .catch((err) => {
-                reject();
+                reject(res.data);
               });
           }else{
             resolve(res.data);

@@ -43,8 +43,8 @@ Component({
         mask:true,
       })
       parseApi.transcode(data).then(res => {
+        wx.hideLoading()
         if (res.code == 200) {
-          wx.hideLoading()
           this.setData({
             url:"",
             name:"",

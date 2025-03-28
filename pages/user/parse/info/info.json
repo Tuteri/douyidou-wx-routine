@@ -3,7 +3,6 @@
   "usingComponents": {
     "t-textarea": "tdesign-miniprogram/textarea/textarea",
     "t-skeleton": "tdesign-miniprogram/skeleton/skeleton",
-    "t-pull-down-refresh": "tdesign-miniprogram/pull-down-refresh/pull-down-refresh",
     "t-cell": "tdesign-miniprogram/cell/cell",
     "t-tag": "tdesign-miniprogram/tag/tag",
     "t-image": "tdesign-miniprogram/image/image",
@@ -12,6 +11,8 @@
     "t-divider": "tdesign-miniprogram/divider/divider",
     "t-image-viewer": "tdesign-miniprogram/image-viewer/image-viewer",
     "t-button":"tdesign-miniprogram/button/button",
-    "t-notice-bar": "tdesign-miniprogram/notice-bar/notice-bar"
+    "t-back-top": "tdesign-miniprogram/back-top/back-top",
+    "t-notice-bar": "tdesign-miniprogram/notice-bar/notice-bar",
+    "t-toast": "tdesign-miniprogram/toast/toast"
   }
 }

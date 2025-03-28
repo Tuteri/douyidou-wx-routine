@@ -37,8 +37,8 @@ Component({
         mask:true,
       })
       parseApi.videoMd5(data).then(res => {
+        wx.hideLoading()
         if (res.code == 200) {
-          wx.hideLoading()
           this.setData({
             url:"",
             name:"",
