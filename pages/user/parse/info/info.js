@@ -388,21 +388,6 @@ Page({
       this.runSaveAllTask();
     })
   },
-  runSaveAllTask() {
-    if (saveAllTaskQueue.length === 0) {
-      hideToast({
-        context: this,
-        selector: '#t-toast',
-      });
-      wx.showToast({
-        title: '保存成功',
-        icon: 'none',
-      })
-      return Promise.resolve();
-    }
-    const task = saveAllTaskQueue.shift(); // 取出第一个任务
-    return task().then(() => this.runSaveAllTask(saveAllTaskQueue)); // 递归执行下一个
-  },
   // 保存视频全部
   saveVideoAll(){
     let that = this;
@@ -422,7 +407,7 @@ Page({
               url: item,
               useHighPerformanceMode: true,
               success: (res) => {
-                wx.saveImageToPhotosAlbum({
+                wx.saveVideoToPhotosAlbum({
                   filePath: res.tempFilePath,
                   success(res) {
                     that.setData({
@@ -454,6 +439,21 @@ Page({
       });
       this.runSaveAllTask();
     })
+  },
+  runSaveAllTask() {
+    if (saveAllTaskQueue.length === 0) {
+      hideToast({
+        context: this,
+        selector: '#t-toast',
+      });
+      wx.showToast({
+        title: '保存成功',
+        icon: 'none',
+      })
+      return Promise.resolve();
+    }
+    const task = saveAllTaskQueue.shift(); // 取出第一个任务
+    return task().then(() => this.runSaveAllTask(saveAllTaskQueue)); // 递归执行下一个
   },
   handleHide() {
     hideToast({
