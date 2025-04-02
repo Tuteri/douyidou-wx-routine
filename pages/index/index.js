@@ -1,15 +1,18 @@
 //获取应用实例
 const app = getApp();
 const parseApi = require('../../api/parse')
+let videoAd = null;
+let videoAdFn = ()=>{};
 Page({
   data: {
     isLogin: false,
+    isVip: false,
     userInfo: null,
     videoUrl: '',
     videoTitle: '',
-    autoPaste:false,//自动粘贴
-    config:{
-      notice:""
+    autoPaste: false, //自动粘贴
+    config: {
+      notice: ""
     },
   },
   onLoad() {
@@ -17,7 +20,7 @@ Page({
       const config = app.globalData.config;
       // 组合公告结构
       let notice = config.notice.split("\n");
-      notice = notice.map(item=>{
+      notice = notice.map(item => {
         return `<div>${item}</div>`;
       }).join("")
       config.notice = notice;
@@ -26,12 +29,38 @@ Page({
         userInfo: app.globalData.userInfo,
         config,
       })
+      // 创建广告
+      // 解析广告激励
+      if (this.data.config.adParseStatus === 'true') {
+        videoAd = wx.createRewardedVideoAd({
+          adUnitId: this.data.config.adRewardsId,
+        })
+        videoAd.onLoad(() => {
+          console.log("onLoad")
+        })
+        videoAd.onError((err) => {
+          console.error('激励视频广告加载失败', err)
+        })
+        videoAd.onClose((res) => {
+          console.log("onclose", res)
+          if (res.isEnded) {
+            this.setData({
+              isVip: true,
+            })
+            videoAdFn();
+          }
+        })
+      }else{
+        this.setData({
+          isVip:true,
+        })
+      }
     })
   },
-  onShow(){
+  onShow() {
     // 实现自动粘贴
     const autoPaste = wx.getStorageSync('autoPaste')
-    if(autoPaste){
+    if (autoPaste) {
       this.paste();
       this.setData({
         autoPaste,
@@ -67,31 +96,54 @@ Page({
     })
   },
   // 一键粘贴开关
-  onAutoPaste(e){
+  onAutoPaste(e) {
     wx.setStorageSync('autoPaste', e.detail.value)
     this.setData({
-      autoPaste:e.detail.value
+      autoPaste: e.detail.value
     })
   },
   // 一键解析
   submit: function () {
     this.setData({
-      videoDownloadTask: {},
+      isVip: false,
     })
     if (this.regUrl(this.data.videoUrl)) {
       this.parseVideo();
-      if (this.isLogin) {} else {
-        app.onLogin(() => {
-          this.parseVideo();
-        });
-      }
     } else {
-      wx.showToast({title:"视频链接不正确",icon:"none"})
+      wx.showToast({
+        title: "视频链接不正确",
+        icon: "none"
+      })
     }
   },
-
+  showAd() {
+    if(videoAd && !this.data.isVip){
+      videoAd.show().catch(() => {
+        // 失败重试
+        videoAd.load()
+          .then(() => videoAd.show())
+          .catch(err => {
+            wx.showToast({
+              title: '广告发生错误，请联系管理员',
+              icon: 'none'
+            })
+          })
+      })
+    }else{
+      this.setData({
+        isVip:true,
+      })
+      videoAdFn();
+    }
+  },
   // 视频解析
-  parseVideo: function () {
+  parseVideo() {
+    // 用户触发广告后，显示激励视频广告
+    if (!this.data.isVip) {
+      videoAdFn = ()=>{this.parseVideo()};
+      this.showAd();
+      return;
+    } 
     var that = this;
     var params = {
       url: this.extractUrl(this.data.videoUrl)
@@ -102,18 +154,24 @@ Page({
     parseApi.url(params).then(res => {
       console.log(res)
       if (res.code != 200) {
-        wx.showToast({title:"解析失败请检查链接正确性,或重试一次",icon:"none"})
+        wx.showToast({
+          title: "解析失败请检查链接正确性,或重试一次",
+          icon: "none"
+        })
       } else {
         wx.navigateTo({
-          url: '/pages/user/parse/info/info?id='+res.data.id,
-          complete(){
+          url: '/pages/user/parse/info/info?id=' + res.data.id,
+          complete() {
             wx.hideLoading()
           }
         })
       }
     }).catch(err => {
       console.error(err)
-      wx.showToast({title:'不支持的视频类型',icon:"none"})
+      wx.showToast({
+        title: '不支持的视频类型',
+        icon: "none"
+      })
     })
   },
   onShareAppMessage: function () {

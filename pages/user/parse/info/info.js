@@ -8,6 +8,8 @@ const {
   openSetting,
 } = require('../../../../utils/util')
 const saveAllTaskQueue = [1, 2, 3];
+let videoAd = null;
+let videoAdFn = ()=>{};
 Page({
 
   /**
@@ -80,18 +82,52 @@ Page({
       doneTask: 0,
       successTask: 0,
       errorTask: 0,
-    }
+    },
+    isVip:false,
+    config:{},
   },
 
   /**
    * 生命周期函数--监听页面加载
    */
   onLoad(options) {
-
     this.setData({
       id: options.id,
       isMobile: app.globalData.isMobile,
     })
+    app.init().then(() => {
+      const config = app.globalData.config;
+      this.setData({
+        config,
+      })
+      // 创建广告
+      // 解析广告激励
+      if (this.data.config.adSaveStatus === 'true') {
+        videoAd = wx.createRewardedVideoAd({
+          adUnitId: this.data.config.adRewardsId,
+        })
+        videoAd.onLoad(() => {
+          console.log("onLoad")
+        })
+        videoAd.onError((err) => {
+          console.error('激励视频广告加载失败', err)
+        })
+        videoAd.onClose((res) => {
+          console.log("onclose", res)
+          if (res.isEnded) {
+            this.setData({
+              isVip: true,
+            })
+            videoAdFn();
+          }
+        })
+      }else{
+        this.setData({
+          isVip:true,
+        })
+      }
+    })
+
   },
   onShow() {
     this.getInfo().then(res => {
@@ -100,7 +136,27 @@ Page({
       })
     })
   },
-
+  // 展示广告
+  showAd() {
+    if(videoAd && !this.data.isVip){
+      videoAd.show().catch(() => {
+        // 失败重试
+        videoAd.load()
+          .then(() => videoAd.show())
+          .catch(err => {
+            wx.showToast({
+              title: '广告发生错误，请联系管理员',
+              icon: 'none'
+            })
+          })
+      })
+    }else{
+      this.setData({
+        isVip:true,
+      })
+      videoAdFn();
+    }
+  },
   getInfo() {
     let data = {
       id: this.data.id
@@ -119,7 +175,12 @@ Page({
     })
   },
   // 保存图片
-  saveImage: function (e) {
+  saveImage(e) {
+    if(!this.data.isVip){
+      videoAdFn = ()=>{this.saveImage(e)};
+      this.showAd();
+      return;
+    }
     let that = this;
     openSetting().then(() => {
       const downloadTask = wx.downloadFile({
@@ -135,6 +196,7 @@ Page({
               })
             },
             fail(res) {
+              console.log(res)
               wx.showToast({
                 title: "保存失败",
                 icon: "none"
@@ -143,6 +205,7 @@ Page({
           })
         },
         fail: (res) => {
+          console.log(res)
           wx.showToast({
             title: "下载失败",
             icon: "none"
@@ -153,7 +216,12 @@ Page({
 
   },
   // 保存视频
-  saveVideo: function (e) {
+  saveVideo(e) {
+    if(!this.data.isVip){
+      videoAdFn = ()=>{this.saveVideo(e)};
+      this.showAd();
+      return;
+    }
     let that = this;
     const index = e.currentTarget.dataset.index;
     let curVideoDownloadTask = this.data.videoDownloadTask[index]
@@ -224,7 +292,12 @@ Page({
 
   },
   // 保存音频
-  saveAudio: function (e) {
+  saveAudio (e) {
+    if(!this.data.isVip){
+      videoAdFn = ()=>{this.saveAudio(e)};
+      this.showAd();
+      return;
+    }
     let that = this;
     const index = e.currentTarget.dataset.index;
     let curAudioDownloadTask = this.data.audioDownloadTask[index]
@@ -324,7 +397,7 @@ Page({
 
   },
   // 
-  initSaveAllTask(t=0) {
+  initSaveAllTask(t = 0) {
     saveAllTaskQueue.length = 0;
     this.setData({
       saveAllTask: {
@@ -337,7 +410,12 @@ Page({
     })
   },
   // 保存图集全部
-  saveImageAll(){
+  saveImageAll() {
+    if(!this.data.isVip){
+      videoAdFn = ()=>{this.saveImageAll()};
+      this.showAd();
+      return;
+    }
     let that = this;
     this.initSaveAllTask(this.data.info.proxy.images.length);
     openSetting().then(() => {
@@ -346,7 +424,7 @@ Page({
         selector: '#t-toast',
         duration: -1,
         theme: "loading",
-        direction:'column',
+        direction: 'column',
       });
       this.data.info.proxy.images.forEach(item => {
         const task = () => {
@@ -389,7 +467,12 @@ Page({
     })
   },
   // 保存视频全部
-  saveVideoAll(){
+  saveVideoAll() {
+    if(!this.data.isVip){
+      videoAdFn = ()=>{this.saveVideoAll()};
+      this.showAd();
+      return;
+    }
     let that = this;
     this.initSaveAllTask(this.data.info.proxy.video.length);
     openSetting().then(() => {
@@ -398,7 +481,7 @@ Page({
         selector: '#t-toast',
         duration: -1,
         theme: "loading",
-        direction:'column',
+        direction: 'column',
       });
       this.data.info.proxy.video.forEach(item => {
         const task = () => {
@@ -465,6 +548,11 @@ Page({
     this.copy(e.currentTarget.dataset.text);
   },
   copy: function (text) {
+    if(!this.data.isVip){
+      videoAdFn = ()=>{this.copy(text)};
+      this.showAd();
+      return;
+    }
     wx.setClipboardData({
       data: text,
     });
