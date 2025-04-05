@@ -7,7 +7,11 @@ const BASE_URL = '/config';
 const routine = (data) => {
   return api.get(BASE_URL + "/routine", data);
 };
+const help = (data) => {
+  return api.get(BASE_URL + "/help", data);
+};
 // 导出所有方法
 module.exports = {
   routine,
+  help,
 };

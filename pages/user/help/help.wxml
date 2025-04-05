@@ -1,0 +1,7 @@
+<view class="container">
+  <t-collapse defaultValue="{{expandIds}}" expandIcon theme="card" wx:if="{{list.length>0}}">
+    <t-collapse-panel header="{{item.title}}" value="{{item.id}}" wx:for="{{list}}" wx:key="index">
+      {{item.description}}
+    </t-collapse-panel>
+  </t-collapse>
+</view>

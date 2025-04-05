@@ -12,6 +12,7 @@
   <view class="menu">
     <t-cell-group theme="card">
       <t-cell title="解析历史" arrow hover url="/pages/user/parse/list/list"></t-cell>
+      <t-cell title="使用说明" arrow hover url="/pages/user/help/help"></t-cell>
       <button class="btn pd0" open-type="share" block>
         <t-cell title="分享给朋友" arrow hover ></t-cell>
       </button>

@@ -14,7 +14,8 @@
     "pages/tools/video-to-mp3/index/index",
     "pages/tools/video-to-mp3/info/info",
     "pages/user/parse/list/list",
-    "pages/user/parse/info/info"
+    "pages/user/parse/info/info",
+    "pages/user/help/help"
   ],
   "window": {
     "navigationBarTitleText": "抖一抖去水印提取",
