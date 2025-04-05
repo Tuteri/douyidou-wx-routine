@@ -21,13 +21,13 @@
 .avatar {
   width: 100rpx;
   height: 100rpx;
-  margin-right: 20rpx;
 }
 
 /* 右侧信息 */
 .info {
   display: flex;
   flex-direction: column;
+  margin-left: 20rpx;
 }
 
 .nickname {

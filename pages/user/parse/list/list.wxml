@@ -7,7 +7,7 @@
           <view slot="description">
             {{item.createFromNow}}
           </view>
-          <t-image src="{{item.cellImage}}" mode="aspectFill" width="96rpx" height="96rpx" slot="image"/>
+          <t-image src="{{item.cellImage}}" mode="aspectFill" width="96rpx" height="96rpx" slot="image" lazy/>
         </t-cell>
       </view>
       <t-empty t-class="empty" wx:else description="您还没有解析过呢~" />

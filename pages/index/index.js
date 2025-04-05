@@ -1,12 +1,12 @@
 //获取应用实例
 const app = getApp();
 const parseApi = require('../../api/parse')
+const rewardApi = require('../../api/reward')
 let videoAd = null;
-let videoAdFn = ()=>{};
+let videoAdFn = () => {};
 Page({
   data: {
     isLogin: false,
-    isVip: false,
     userInfo: null,
     videoUrl: '',
     videoTitle: '',
@@ -14,10 +14,12 @@ Page({
     config: {
       notice: ""
     },
+    adSkip: false, //跳过广告
   },
   onLoad() {
-    app.init().then(() => {
+    app.init().then(async () => {
       const config = app.globalData.config;
+      const userInfo = app.globalData.userInfo;
       // 组合公告结构
       let notice = config.notice.split("\n");
       notice = notice.map(item => {
@@ -26,14 +28,14 @@ Page({
       config.notice = notice;
       this.setData({
         isLogin: app.globalData.isLogin,
-        userInfo: app.globalData.userInfo,
+        userInfo,
         config,
       })
       // 创建广告
       // 解析广告激励
-      if (this.data.config.adParseStatus === 'true') {
+      if (config.adParseStatus === 'true') {
         videoAd = wx.createRewardedVideoAd({
-          adUnitId: this.data.config.adRewardsId,
+          adUnitId: config.adRewardsId,
         })
         videoAd.onLoad(() => {
           console.log("onLoad")
@@ -44,15 +46,21 @@ Page({
         videoAd.onClose((res) => {
           console.log("onclose", res)
           if (res.isEnded) {
-            this.setData({
-              isVip: true,
+            wx.showLoading({
+              title: '加载中',
             })
-            videoAdFn();
+            // 发起领奖
+            app.handleRewardClaim(1,config.adRewardsId,this.data.videoUrl).then(async res=>{
+              this.setData({
+                adSkip: true,
+              })
+              videoAdFn();
+            })
           }
         })
-      }else{
+      } else {
         this.setData({
-          isVip:true,
+          adSkip: true,
         })
       }
     })
@@ -103,9 +111,9 @@ Page({
     })
   },
   // 一键解析
-  submit: function () {
+  async submit () {
     this.setData({
-      isVip: false,
+      adSkip: await app.computeAdSkipParse(),
     })
     if (this.regUrl(this.data.videoUrl)) {
       this.parseVideo();
@@ -117,7 +125,7 @@ Page({
     }
   },
   showAd() {
-    if(videoAd && !this.data.isVip){
+    if (videoAd && !this.data.adSkip) {
       videoAd.show().catch(() => {
         // 失败重试
         videoAd.load()
@@ -129,9 +137,9 @@ Page({
             })
           })
       })
-    }else{
+    } else {
       this.setData({
-        isVip:true,
+        adSkip: true,
       })
       videoAdFn();
     }
@@ -139,11 +147,13 @@ Page({
   // 视频解析
   parseVideo() {
     // 用户触发广告后，显示激励视频广告
-    if (!this.data.isVip) {
-      videoAdFn = ()=>{this.parseVideo()};
+    if (!this.data.adSkip) {
+      videoAdFn = () => {
+        this.parseVideo()
+      };
       this.showAd();
       return;
-    } 
+    }
     var that = this;
     var params = {
       url: this.extractUrl(this.data.videoUrl)
@@ -174,18 +184,10 @@ Page({
       })
     })
   },
-  onShareAppMessage: function () {
-    return {
-      title: '推荐一款超好用的短视频水印一键提取工具，赶快试试吧～',
-      imageUrl: '/images/share.jpg',
-      path: '/pages/index/index',
-    }
+  onShareAppMessage() {
+    return app.onShareAppMessage()
   },
-  onShareTimeline: function () {
-    return {
-      title: '推荐一款超好用的短视频水印一键提取工具，赶快试试吧～',
-      imageUrl: '/images/share.jpg',
-      query: '/pages/index/index',
-    }
+  onShareTimeline() {
+    return app.onShareTimeline()
   },
 })

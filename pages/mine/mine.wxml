@@ -1,7 +1,7 @@
 <view class="container">
   <!-- 个人信息 -->
   <view class="header">
-    <t-avatar t-class="t-class-icon" class="avatar" size="medium" icon="user"></t-avatar>
+    <t-avatar class="avatar" size="medium" icon="user"></t-avatar>
     <view class="info">
       <view class="nickname">{{isLogin ? userInfo.wxName : ""}}</view>
       <view class="username" wx:if="{{isLogin}}">用户名：{{userInfo.username || '未设置'}}</view>
@@ -12,6 +12,9 @@
   <view class="menu">
     <t-cell-group theme="card">
       <t-cell title="解析历史" arrow hover url="/pages/user/parse/list/list"></t-cell>
+      <button class="btn pd0" open-type="share" block>
+        <t-cell title="分享给朋友" arrow hover ></t-cell>
+      </button>
       <button class="btn pd0" open-type="feedback" block>
         <t-cell title="意见反馈" arrow hover ></t-cell>
       </button>

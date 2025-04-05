@@ -8,14 +8,7 @@ let queue = Promise.resolve(); // 初始化一个已经解析的 Promise，作�
 const request = (url, method = "GET", data = {}, headers = {}) => {
   queue = queue.then(() => {
     return new Promise((resolve, reject) => {
-      let token = wx.getStorageSync("token");
-      // 处理 headers，只有 token 存在时才添加 Authorization
-      const header = {
-        ...headers,
-        ...(token ? {
-          Authorization: `Bearer ${token}`
-        } : {}),
-      };
+      const header = getHeaders(headers);
       wx.request({
         url: baseURL + url, // 拼接 baseURL
         method,
@@ -27,8 +20,21 @@ const request = (url, method = "GET", data = {}, headers = {}) => {
           } else if (res.data.code == 401) {
             refreshAccessToken()
               .then(() => {
-                // 刷新成功后重试队列中的所有请求
-                resolve(res.data)
+                // 重试
+                const header = getHeaders(headers);
+                wx.request({
+                  url: baseURL + url, // 拼接 baseURL
+                  method,
+                  data,
+                  header,
+                  success: (res) => {
+                    console.log(res);
+                    resolve(res.data)
+                  },
+                  fail: (err) => {
+                    reject(err);
+                  },
+                })
               })
               .catch((err) => {
                 reject(res.data);
@@ -44,9 +50,20 @@ const request = (url, method = "GET", data = {}, headers = {}) => {
     });
   }).catch((err) => {
     console.log("request catch")
-    return Promise.resolve(); // 确保 queue 继续执行
+    return Promise.resolve({}); // 确保 queue 继续执行
   });
   return queue;
+}
+const getHeaders = (headers)=>{
+  let token = wx.getStorageSync("token");
+  // 处理 headers，只有 token 存在时才添加 Authorization
+  const header = {
+    ...headers,
+    ...(token ? {
+      Authorization: `Bearer ${token}`
+    } : {}),
+  };
+  return header;
 }
 // 刷新 token 请求
 function refreshAccessToken() {
@@ -74,7 +91,7 @@ function refreshAccessToken() {
         } else {
           wx.removeStorageSync('token')
           wx.removeStorageSync('refresh_token')
-          resolve()
+          reject()
           // onLogin()
         }
       },
