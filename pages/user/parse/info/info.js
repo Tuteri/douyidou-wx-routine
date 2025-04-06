@@ -2,8 +2,8 @@ import Toast, { hideToast } from "tdesign-miniprogram/toast/index";
 const parseApi = require("../../../../api/parse");
 const userApi = require("../../../../api/user");
 const app = getApp();
-const { dayjs, openSetting } = require("../../../../utils/util");
-const saveAllTaskQueue = [1, 2, 3];
+const { dayjs, openSetting,showDialog } = require("../../../../utils/util");
+const saveAllTaskQueue = [];
 let videoAd = null;
 let videoAdFn = () => {};
 Page({
@@ -105,7 +105,7 @@ Page({
         config,
       });
       // 创建广告
-      // 解析广告激励
+      // 保存广告激励
       if (this.data.config.adSaveStatus === "true") {
         videoAd = wx.createRewardedVideoAd({
           adUnitId: this.data.config.adRewardsId,
@@ -156,18 +156,22 @@ Page({
       });
     }
     if (videoAd && !this.data.adSkip) {
-      videoAd.show().catch(() => {
-        // 失败重试
-        videoAd
-          .load()
-          .then(() => videoAd.show())
-          .catch((err) => {
-            wx.showToast({
-              title: "广告发生错误，请联系管理员",
-              icon: "none",
+      showDialog('您没有保存次数，继续观看广告获取保存次数？').then(res=>{
+        videoAd.show().catch(() => {
+          // 失败重试
+          videoAd
+            .load()
+            .then(() => videoAd.show())
+            .catch((err) => {
+              wx.showToast({
+                title: "系统发生错误，请联系管理员",
+                icon: "none",
+              });
             });
-          });
-      });
+        });
+      }).catch(res=>{
+        console.log("取消观看广告")
+      })
     } else {
       this.setData({
         adSkip: true,

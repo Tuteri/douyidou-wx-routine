@@ -5,10 +5,10 @@
     </view>
   </t-notice-bar>
   <view class="tool-box">
-    <t-cell-group theme="card">
-    <t-cell title="视频转格式" description="m3u8网络视频转为mp4格式" leftIcon="video-camera-1" url="/pages/tools/transcode/index/index" hover arrow ></t-cell>
-    <t-cell title="视频MD5修改" description="视频去重更容易过审核" leftIcon="video-library" hover arrow url="/pages/tools/video-md5/index/index" ></t-cell>
-    <t-cell title="视频音频提取" description="从视频中提取音频" leftIcon="video-camera-music" hover arrow url="/pages/tools/video-to-mp3/index/index" ></t-cell>
-  </t-cell-group>
+    <t-cell-group theme="card" title="视频转码">
+      <t-cell title="视频转格式" description="m3u8网络视频转为mp4格式" leftIcon="video-camera-1" url="/pages/tools/transcode/index/index" hover arrow></t-cell>
+      <t-cell title="视频MD5修改" description="视频去重更容易过审核" leftIcon="video-library" hover arrow url="/pages/tools/video-md5/index/index"></t-cell>
+      <t-cell title="视频音频提取" description="从视频中提取音频" leftIcon="video-camera-music" hover arrow url="/pages/tools/video-to-mp3/index/index"></t-cell>
+    </t-cell-group>
   </view>
 </view>

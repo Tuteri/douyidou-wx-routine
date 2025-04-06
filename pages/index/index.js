@@ -2,6 +2,7 @@
 const app = getApp();
 const parseApi = require('../../api/parse')
 const rewardApi = require('../../api/reward')
+const {showDialog} = require('../../utils/util')
 let videoAd = null;
 let videoAdFn = () => {};
 Page({
@@ -126,17 +127,22 @@ Page({
   },
   showAd() {
     if (videoAd && !this.data.adSkip) {
-      videoAd.show().catch(() => {
-        // 失败重试
-        videoAd.load()
-          .then(() => videoAd.show())
-          .catch(err => {
-            wx.showToast({
-              title: '广告发生错误，请联系管理员',
-              icon: 'none'
+      showDialog('您没有解析次数，继续观看广告获取解析次数？').then(res=>{
+        videoAd.show().catch(() => {
+          // 失败重试
+          videoAd.load()
+            .then(() => videoAd.show())
+            .catch(err => {
+              wx.showToast({
+                title: '系统发生错误，请联系管理员',
+                icon: 'none'
+              })
             })
-          })
+        })
+      }).catch((res)=>{
+        console.log("取消观看广告")
       })
+      
     } else {
       this.setData({
         adSkip: true,

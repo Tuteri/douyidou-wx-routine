@@ -3,6 +3,7 @@
     "t-textarea": "tdesign-miniprogram/textarea/textarea",
     "t-notice-bar": "tdesign-miniprogram/notice-bar/notice-bar",
     "t-button":"tdesign-miniprogram/button/button",
+    "t-dialog": "tdesign-miniprogram/dialog/dialog",
     "t-switch": "tdesign-miniprogram/switch/switch",
     "t-link": "tdesign-miniprogram/link/link"
     

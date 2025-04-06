@@ -1,12 +1,10 @@
-const parseApi = require("../../../../api/parse")
-import bytes from 'bytes';
-const {
-  dayjs,
-  openSetting,
-  showToast
-} = require('../../../../utils/util')
+const app = getApp();
+const parseApi = require("../../../../api/parse");
+import bytes from "bytes";
+const { dayjs, openSetting, showDialog } = require("../../../../utils/util");
+let videoAd = null;
+let videoAdFn = () => {};
 Page({
-
   /**
    * 页面的初始数据
    */
@@ -14,52 +12,64 @@ Page({
     id: null,
     info: {},
     skeleton: [
-      [{
-          width: '327rpx'
+      [
+        {
+          width: "327rpx",
         },
         {
-          width: '327rpx'
-        }
+          width: "327rpx",
+        },
       ],
-      [{
-          width: '168rpx',
-          height: '32rpx'
+      [
+        {
+          width: "168rpx",
+          height: "32rpx",
         },
         {
-          width: '486rpx',
-          height: '32rpx'
+          width: "486rpx",
+          height: "32rpx",
         },
       ],
-      [{
-          width: '168rpx',
-          height: '32rpx'
+      [
+        {
+          width: "168rpx",
+          height: "32rpx",
         },
         {
-          width: '486rpx',
-          height: '32rpx'
+          width: "486rpx",
+          height: "32rpx",
         },
       ],
-      [{
-          width: '118rpx',
-          height: '32rpx'
+      [
+        {
+          width: "118rpx",
+          height: "32rpx",
         },
         {
-          width: '536rpx',
-          height: '32rpx'
+          width: "536rpx",
+          height: "32rpx",
         },
       ],
-      [{
-        width: '100%',
-        height: '32rpx'
-      }, ],
-      [{
-        width: '100%',
-        height: '32rpx'
-      }, ],
+      [
+        {
+          width: "100%",
+          height: "32rpx",
+        },
+      ],
+      [
+        {
+          width: "100%",
+          height: "32rpx",
+        },
+      ],
     ],
     showSkeleton: true,
     videoDownloadTask: null,
-    allowDownload:false,
+    allowDownload: false,
+    adSkip: false,
+    isSave: false, //保存状态，只触发一次
+    config: {},
+    isMobile: true,
   },
 
   /**
@@ -67,65 +77,147 @@ Page({
    */
   onLoad(options) {
     this.setData({
-      id: options.id
-    })
-    this.getInfo().then(res => {
+      id: options.id,
+      isMobile: app.globalData.isMobile,
+    });
+    
+    app.init().then(() => {
+      const config = app.globalData.config;
+      this.setData({
+        config,
+      });
+      // 创建广告
+      // 保存广告激励
+      if (this.data.config.adSaveStatus === "true") {
+        videoAd = wx.createRewardedVideoAd({
+          adUnitId: this.data.config.adRewardsId,
+        });
+        videoAd.onLoad(() => {
+          console.log("onLoad");
+        });
+        videoAd.onError((err) => {
+          console.error("激励视频广告加载失败", err);
+        });
+        videoAd.onClose((res) => {
+          console.log("onclose", res);
+          if (res.isEnded) {
+            // 发起领奖
+            app
+              .handleRewardClaim(4, config.adRewardsId, this.data.id)
+              .then(async (res) => {
+                userApi.consumer({ type: 1 });
+                this.setData({
+                  adSkip: true,
+                  isSave: true,
+                });
+                videoAdFn();
+              });
+          }
+        });
+      } else {
+        this.setData({
+          adSkip: true,
+        });
+      }
+    });
+    this.getInfo().then((res) => {
       this.setData({
         showSkeleton: false,
-      })
-    })
+      });
+    });
   },
-
+  // 展示广告
+  async showAd() {
+    if (!this.data.isSave) {
+      const adSkip = await app.computeAdSkipSave();
+      if (adSkip) await userApi.consumer({ type: 1 });
+      this.setData({
+        adSkip: adSkip,
+      });
+    }
+    if (videoAd && !this.data.adSkip) {
+      showDialog("您没有保存次数，继续观看广告获取保存次数？")
+        .then((res) => {
+          videoAd.show().catch(() => {
+            // 失败重试
+            videoAd
+              .load()
+              .then(() => videoAd.show())
+              .catch((err) => {
+                wx.showToast({
+                  title: "系统发生错误，请联系管理员",
+                  icon: "none",
+                });
+              });
+          });
+        })
+        .catch((res) => {
+          console.log("取消观看广告");
+        });
+    } else {
+      this.setData({
+        adSkip: true,
+      });
+      videoAdFn();
+    }
+  },
   getInfo() {
     let data = {
-      id: this.data.id
-    }
-    return parseApi.transcodeStats(data).then(res => {
-      let allowDownload = res.data.size < bytes("200MB")
-      res.data.createFromNow = dayjs(res.data.createTime).fromNow()
-      res.data.doneFromNow = dayjs(res.data.doneTime).fromNow()
+      id: this.data.id,
+    };
+    return parseApi.transcodeStats(data).then((res) => {
+      let allowDownload = res.data.size < bytes("200MB");
+      res.data.createFromNow = dayjs(res.data.createTime).fromNow();
+      res.data.doneFromNow = dayjs(res.data.doneTime).fromNow();
       res.data.size = bytes(res.data.size);
-      const d = dayjs.duration(res.data.time, 'seconds');
+      const d = dayjs.duration(res.data.time, "seconds");
       let m = "";
       let s = "";
-      if(d.minutes()>0){
-        m = `${String(d.minutes()).padStart(2, '0')}分`;
+      if (d.minutes() > 0) {
+        m = `${String(d.minutes()).padStart(2, "0")}分`;
       }
-      if(d.seconds()>0){
-        s = `${String(d.seconds()).padStart(2, '0')}秒`
+      if (d.seconds() > 0) {
+        s = `${String(d.seconds()).padStart(2, "0")}秒`;
       }
-      res.data.timeText = m+s;
+      res.data.timeText = m + s;
       this.setData({
-        allowDownload:allowDownload,
-        info: res.data
-      })
-    })
+        allowDownload: allowDownload,
+        info: res.data,
+      });
+    });
   },
   onRefresh() {
     this.setData({
-      enable: true
+      enable: true,
     });
-    this.getInfo().then(res => {
+    this.getInfo().then((res) => {
       this.setData({
-        enable: false
+        enable: false,
       });
-    })
+    });
   },
   // 保存视频
   saveVideo: function (e) {
+    if (!this.data.adSkip) {
+      videoAdFn = () => {
+        this.saveVideo(e);
+      };
+      this.showAd();
+      return;
+    }
     let that = this;
     let curVideoDownloadTask = this.data.videoDownloadTask;
     // 正在下载中，终止下载
-    console.log(curVideoDownloadTask)
+    console.log(curVideoDownloadTask);
     if (curVideoDownloadTask && curVideoDownloadTask.action) {
       let downloadTask = curVideoDownloadTask.downloadTask;
       downloadTask.abort();
       this.setData({
         downloadTask: null,
-      })
+      });
       return;
     }
-    openSetting().then(res => {
+    openSetting().then((res) => {
       const downloadTask = wx.downloadFile({
         url: this.data.info.downloadUrl,
         useHighPerformanceMode: true,
@@ -135,53 +227,59 @@ Page({
             filePath: res.tempFilePath,
             success(res) {
               wx.showToast({
-                title:"保存成功",
-              })
+                title: "保存成功",
+              });
             },
             fail(res) {
               wx.showToast({
-                title:"保存失败",
-              })
-            }
-          })
+                title: "保存失败",
+              });
+            },
+          });
         },
         fail: (res) => {
           wx.showToast({
-            title:"下载失败",
-            icon:"none"
-          })
+            title: "下载失败",
+            icon: "none",
+          });
           this.setData({
             [`videoDownloadTask.action`]: false,
-          })
+          });
         },
-      })
+      });
       this.setData({
         videoDownloadTask: {
           downloadTask,
           progress: 0,
           action: true,
-        }
-      })
+        },
+      });
       // 下载进度
       downloadTask.onProgressUpdate((res) => {
         // let progress = res.progress || 100;
         this.setData({
           [`videoDownloadTask.progress`]: res.progress,
-        })
+        });
         console.log(res.progress);
         if (res.progress == 100) {
           this.setData({
             [`videoDownloadTask.action`]: false,
-          })
+          });
         }
-      })
-    })
-
+      });
+    });
   },
   copyText() {
     this.copy(this.data.info.downloadUrl);
   },
   copy: function (text) {
+    if (!this.data.adSkip) {
+      videoAdFn = () => {
+        this.copy(text);
+      };
+      this.showAd();
+      return;
+    }
     wx.setClipboardData({
       data: text,
     });
@@ -189,49 +287,35 @@ Page({
   /**
    * 生命周期函数--监听页面初次渲染完成
    */
-  onReady() {
-
-  },
+  onReady() {},
 
   /**
    * 生命周期函数--监听页面显示
    */
-  onShow() {
-
-  },
+  onShow() {},
 
   /**
    * 生命周期函数--监听页面隐藏
    */
-  onHide() {
-
-  },
+  onHide() {},
 
   /**
    * 生命周期函数--监听页面卸载
    */
-  onUnload() {
-
-  },
+  onUnload() {},
 
   /**
    * 页面相关事件处理函数--监听用户下拉动作
    */
-  onPullDownRefresh() {
-
-  },
+  onPullDownRefresh() {},
 
   /**
    * 页面上拉触底事件的处理函数
    */
-  onReachBottom() {
-
-  },
+  onReachBottom() {},
 
   /**
    * 用户点击右上角分享
    */
-  onShareAppMessage() {
-
-  }
-})
+  onShareAppMessage() {},
+});
