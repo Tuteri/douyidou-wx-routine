@@ -1,7 +1,7 @@
 <view class="container">
   <t-toast id="t-toast" />
   <t-dialog id="t-dialog" />
-  <t-notice-bar visible="{{true}}" prefixIcon="{{false}}" theme="success">
+  <t-notice-bar visible="{{true}}" prefixIcon="{{false}}">
     <view slot="content">
       <rich-text nodes="{{config.notice}}" />
     </view>
