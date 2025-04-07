@@ -16,7 +16,7 @@ Page({
   onLoad() {
     app.init().then(() => {
       const config = app.globalData.config;
-      if (config.adParseStatus === "true") {
+      if (config.adRewardTokensStatus === "true") {
         videoAd = wx.createRewardedVideoAd({
           adUnitId: config.adRewardTokensId,
         });
