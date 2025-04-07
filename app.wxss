@@ -32,6 +32,15 @@ page{
 .pd0{
   padding: 0;
 }
+.f1{
+  flex: 1;
+}
+.col{
+  flex-direction: column;
+}
+.col .d-label{
+  margin-bottom: 32rpx;
+}
 .d-form-item {
   --td-input-align-items:start;
   background-color: var(--td-input-bg-color, var(--td-bg-color-container, var(--td-font-white-1, #ffffff)));
