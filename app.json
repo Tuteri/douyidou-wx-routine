@@ -1,7 +1,6 @@
 {
   "pages": [
     "pages/index/index",
-    "pages/help/help",
     "pages/mine/mine",
     "pages/more/more",
     "pages/tools/transcode/index/index",
