@@ -4,16 +4,17 @@
 
 /* 个人信息区域 */
 .header {
-  display: flex;
-  align-items: center;
   padding: 30rpx 20rpx;
-  background-color: #ffffff;
-  /* border-radius: 20rpx; */
+  background-color: var(--td-cell-bg-color, var(--td-bg-color-container, var(--td-font-white-1, #ffffff)));
   border-radius: var(--td-radius-large, 18rpx);
-  /* box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.1); */
   margin-bottom: 20rpx;
 }
-
+.user-info{
+  display: flex;
+  align-items: center;
+  padding-bottom: 30rpx;
+  border-bottom: var(--td-cell-border-width, 1px) solid var(--td-cell-border-color, #e7e7e7);
+}
 .header:hover {
   opacity: 0.9; /* 轻微点击反馈 */
 }
@@ -56,14 +57,42 @@
   color: unset;
   background-color: unset;
 }
+.info-more{
+  display: flex;
+  background-color: var(--td-cell-bg-color, var(--td-bg-color-container, var(--td-font-white-1, #ffffff)));
+  padding-top: 20rpx;
+}
+.info-more-item{
+  width: 50%;
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+}
+.info-more-item:first-child{
+  border-right: var(--td-cell-border-width, 1px) solid var(--td-cell-border-color, #e7e7e7);
+}
+.info-item-label{
+  margin-bottom: 10rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.dialog-content{
+  text-align: center;
+  padding-top: 20rpx;
+}
+.dialog-stepper {
+  padding-top: 12px;
+  padding-bottom: 12px;
+  box-sizing: border-box;
+}
+.t-dialog__footer--full{
+  padding-top: 10rpx !important;
+}
 /* 适配深色模式 */
 @media (prefers-color-scheme: dark) {
   .mine-page {
     background-color: transparent; 
-  }
-  .header {
-    background-color: var(--td-cell-bg-color, var(--td-bg-color-container, var(--td-font-white-1, #ffffff)));
-    /* box-shadow: 0 2rpx 10rpx rgba(255, 255, 255, 0.1); */
   }
   .nickname {
     color: #ffffff;

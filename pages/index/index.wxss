@@ -2,7 +2,8 @@ page {
   --td-grid-bg-color: transparent;
   --td-grid-item-bg-color: transparent;
 }
-.button-example{
+
+.button-example {
   padding: 32rpx;
   display: flex;
   justify-content: space-between;
@@ -10,26 +11,47 @@ page {
   width: 100%;
   box-sizing: border-box;
 }
-.btns{
+
+.btns {
   display: flex;
   justify-content: space-between;
   gap: 32rpx;
   width: 100%;
+  position: relative;
 }
+
 .external-class {
   height: 200rpx;
   flex: 1;
 }
-.image-btns{
+
+.image-btns {
   width: 100%;
   padding: 0;
   padding-top: 32rpx;
   /* gap: 16rpx; */
 }
-.link-example{
+
+.link-example {
   display: flex;
   align-items: center;
   justify-content: space-evenly;
   height: 96rpx;
   background-color: var(--bg-color-demo);
+}
+
+.d-form-item {
+  overflow: unset;
+}
+.clear{
+  position: absolute !important;
+  top: -70rpx;
+  left: 0rpx;
+  padding: 10rpx 30rpx 30rpx !important;
+  font-size: 26rpx !important;
+  font-weight: bold;
+  line-height: 26rpx !important;
+}
+.clear.bounce-out-left{
+  left: -999rpx;
 }

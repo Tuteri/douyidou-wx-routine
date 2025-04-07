@@ -1,0 +1,101 @@
+/* 动画基础类 */
+.animated {
+  animation-duration: 1s;
+  animation-fill-mode: both;
+}
+
+/* bounceInUp 动画 */
+.bounce-in-up {
+  animation-name: bounceInUp;
+}
+
+@keyframes bounceInUp {
+  0% {
+    opacity: 0;
+    transform: translateY(3000px);
+  }
+
+  60% {
+    opacity: 1;
+    transform: translateY(-20px);
+  }
+
+  75% {
+    transform: translateY(10px);
+  }
+
+  90% {
+    transform: translateY(-5px);
+  }
+
+  100% {
+    transform: translateY(0);
+  }
+}
+
+/* bounceOutDown 动画 */
+.bounce-out-down {
+  animation-name: bounceOutDown;
+}
+
+@keyframes bounceOutDown {
+  20% {
+    transform: translateY(-10px);
+  }
+
+  40%,
+  45% {
+    opacity: 1;
+    transform: translateY(20px);
+  }
+
+  100% {
+    opacity: 0;
+    transform: translateY(2000px);
+  }
+}
+
+/* bounceInLeft 动画 */
+.bounce-in-left {
+  animation-name: bounceInLeft;
+}
+
+@keyframes bounceInLeft {
+  0% {
+    opacity: 0;
+    transform: translateX(-3000px);
+  }
+
+  60% {
+    opacity: 1;
+    transform: translateX(25px);
+  }
+
+  75% {
+    transform: translateX(-10px);
+  }
+
+  90% {
+    transform: translateX(5px);
+  }
+
+  100% {
+    transform: translateX(0);
+  }
+}
+
+.bounce-out-left {
+  animation-name: bounceOutLeft;
+}
+
+@keyframes bounceOutLeft {
+  20% {
+    opacity: 1;
+    transform: translateX(20px);
+  }
+
+  100% {
+    opacity: 0;
+    transform: translateX(-2000px);
+  }
+}

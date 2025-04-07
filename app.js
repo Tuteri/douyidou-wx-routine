@@ -153,7 +153,7 @@ App({
     return configApi.routine().then((res) => {
       this.globalData.config = res.data;
       wx.setNavigationBarTitle({
-        title: res.data.title,
+        title: this.globalData.config.title,
       });
       return Promise.resolve();
     });

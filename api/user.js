@@ -22,6 +22,9 @@ const getUserInfo = () => {
 const consumer = (data) => {
   return api.get(BASE_URL + "/consumer",data);
 };
+const tokensToParseNum = (data) => {
+  return api.post(BASE_URL + "/tokensToParseNum",data);
+};
 
 const logout = () => {
   return new Promise((resolve) => {
@@ -36,5 +39,6 @@ module.exports = {
   login,
   getUserInfo,
   consumer,
+  tokensToParseNum,
   logout
 };

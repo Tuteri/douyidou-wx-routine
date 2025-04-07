@@ -1,26 +1,49 @@
 <view class="container">
   <!-- 个人信息 -->
   <view class="header">
-    <t-avatar class="avatar" size="medium" icon="user"></t-avatar>
-    <view class="info">
-      <view class="nickname">{{isLogin ? userInfo.wxName : ""}}</view>
-      <view class="username" wx:if="{{isLogin}}">用户名：{{userInfo.username || '未设置'}}</view>
+    <view class="user-info">
+      <t-avatar class="avatar" size="medium" icon="user"></t-avatar>
+      <view class="info">
+        <view class="nickname">{{isLogin ? userInfo.wxName : ""}}</view>
+        <view class="username" wx:if="{{isLogin}}">用户名：{{userInfo.username || '未设置'}}</view>
+      </view>
+    </view>
+    <view class="info-more">
+      <view class="info-more-item">
+        <view class="info-item-label">可用解析次数</view>
+        <view class="info-item-value">{{userInfo.parseNum || 0}}</view>
+      </view>
+      <view class="info-more-item">
+        <view class="info-item-label">可用积分
+          <t-tag style="margin-left: 10rpx;" variant="light" theme="primary" icon="refresh" bind:tap="onExchange">兑换</t-tag>
+        </view>
+        <view class="info-item-value">{{userInfo.tokens || 0}}</view>
+      </view>
     </view>
   </view>
-
   <!-- 菜单 -->
   <view class="menu">
     <t-cell-group theme="card">
       <t-cell title="解析历史" arrow hover url="/pages/user/parse/list/list"></t-cell>
       <t-cell title="使用说明" arrow hover url="/pages/user/help/help"></t-cell>
       <button class="btn pd0" open-type="share" block>
-        <t-cell title="分享给朋友" arrow hover ></t-cell>
+        <t-cell title="分享给朋友" arrow hover note="{{config.shareNumStatus==='true'?'免费解析':''}}"></t-cell>
       </button>
+      <t-cell title="观看视频" arrow hover  note="免费积分" bind:tap="onReward" wx:if="{{config.adRewardTokensStatus==='true'}}"></t-cell>
       <button class="btn pd0" open-type="feedback" block>
-        <t-cell title="意见反馈" arrow hover ></t-cell>
+        <t-cell title="意见反馈" arrow hover></t-cell>
       </button>
       <!-- <t-cell title="修改密码（网页版）" arrow bindtap="editPassword"></t-cell>
       <t-cell title="敬请期待"></t-cell> -->
     </t-cell-group>
   </view>
 </view>
+<t-dialog visible="{{showExchange}}" title="兑换解析次数" confirm-btn="确定" cancel-btn="取消" bind:confirm="confirmDialog" bind:cancel="closeDialog">
+  <view class="dialog-content" slot="content">
+    <view> 每{{config.tokensToParseNum}}积分兑换1次 </view>
+    <view> 当前可兑换：{{parseNum}} 次 </view>
+    <view class="dialog-stepper flex jc">
+      <t-stepper size="large" value="{{exchangeParseNum}}" input-width="60" theme="filled" min="1" max="{{parseNum}}" bind:change="handleExchange" />
+    </view>
+  </view>
+</t-dialog>

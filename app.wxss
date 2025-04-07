@@ -1,5 +1,6 @@
 @import 'miniprogram_npm/tdesign-miniprogram/common/style/theme/_index.wxss';
-
+@import 'css/animate.wxss';
+/* --td-bg-color-page */
 page{
   --wx-bg-color: #f3f3f3;
 }
@@ -18,6 +19,12 @@ page{
 }
 .flex{
   display: flex;
+}
+.ac{
+  align-items: center;
+}
+.jc{
+  justify-content: center;
 }
 .jsb{
   justify-content: space-between;

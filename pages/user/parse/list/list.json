@@ -7,6 +7,7 @@
     "t-cell": "tdesign-miniprogram/cell/cell",
     "t-tag": "tdesign-miniprogram/tag/tag",
     "t-back-top": "tdesign-miniprogram/back-top/back-top",
-    "t-image": "tdesign-miniprogram/image/image"
+    "t-image": "tdesign-miniprogram/image/image",
+    "fade-item": "/components/fade-item/fade-item"
   }
 }

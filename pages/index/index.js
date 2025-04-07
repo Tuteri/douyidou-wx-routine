@@ -10,7 +10,6 @@ Page({
     isLogin: false,
     userInfo: null,
     videoUrl: '',
-    videoTitle: '',
     autoPaste: false, //自动粘贴
     config: {
       notice: ""
@@ -104,6 +103,12 @@ Page({
       }
     })
   },
+  // 清空
+  clear(){
+    this.setData({
+      videoUrl:'',
+    })
+  },
   // 一键粘贴开关
   onAutoPaste(e) {
     wx.setStorageSync('autoPaste', e.detail.value)
@@ -113,10 +118,10 @@ Page({
   },
   // 一键解析
   async submit () {
-    this.setData({
-      adSkip: await app.computeAdSkipParse(),
-    })
     if (this.regUrl(this.data.videoUrl)) {
+      this.setData({
+        adSkip: await app.computeAdSkipParse(),
+      })
       this.parseVideo();
     } else {
       wx.showToast({

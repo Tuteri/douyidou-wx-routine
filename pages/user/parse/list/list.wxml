@@ -1,14 +1,22 @@
 <view>
-  <t-pull-down-refresh value="{{enable}}" loadingTexts="{{['下拉刷新', '松手刷新', '正在刷新', '刷新完成']}}"  bind:refresh="onRefresh" bind:scroll="onScroll" bind:scrolltolower="onScrollToLower" t-class="refresh"> 
+  <t-pull-down-refresh value="{{enable}}" loadingTexts="{{['下拉刷新', '松手刷新', '正在刷新', '刷新完成']}}" bind:refresh="onRefresh" bind:scroll="onScroll" bind:scrolltolower="onScrollToLower" lower-threshold="150" t-class="refresh">
     <!-- 包裹页面全部内容 -->
     <view class="box">
       <view class="pulldown-reflesh__content" wx:if="{{list.length>0}}">
-        <t-cell wx:for="{{list}}" wx:key="index" title="{{item.text}}" hover arrow url="../info/info?id={{item.id}}">
+          <fade-item wx:for="{{list}}" wx:key="index">
+            <t-cell title="{{item.text}}" hover arrow url="../info/info?id={{item.id}}">
+              <view slot="description">
+                {{item.createFromNow}}
+              </view>
+              <t-image src="{{item.cellImage}}" mode="aspectFill" width="96rpx" height="96rpx" slot="image" lazy />
+            </t-cell>
+          </fade-item>
+        <!-- <t-cell wx:for="{{list}}" wx:key="index" title="{{item.text}}" hover arrow url="../info/info?id={{item.id}}">
           <view slot="description">
             {{item.createFromNow}}
           </view>
-          <t-image src="{{item.cellImage}}" mode="aspectFill" width="96rpx" height="96rpx" slot="image" lazy/>
-        </t-cell>
+          <t-image src="{{item.cellImage}}" mode="aspectFill" width="96rpx" height="96rpx" slot="image" lazy />
+        </t-cell> -->
       </view>
       <t-empty t-class="empty" wx:else description="您还没有解析过呢~" />
       <t-back-top t-class="back-top" text="顶部" scroll-top="{{scrollTop}}" visibility-height="{{100}}" />

@@ -1,0 +1,3 @@
+<view id="fadeItem" class="fade-in-up {{visible ? 'show' : ''}}">
+  <slot></slot>
+</view>

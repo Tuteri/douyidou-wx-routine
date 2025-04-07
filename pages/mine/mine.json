@@ -3,6 +3,9 @@
     "t-cell": "tdesign-miniprogram/cell/cell",
     "t-cell-group": "tdesign-miniprogram/cell-group/cell-group",
     "t-avatar": "tdesign-miniprogram/avatar/avatar",
+    "t-tag": "tdesign-miniprogram/tag/tag",
+    "t-stepper": "tdesign-miniprogram/stepper/stepper",
+    "t-dialog": "tdesign-miniprogram/dialog/dialog",
     "t-button": "tdesign-miniprogram/button/button"
   }
 }
