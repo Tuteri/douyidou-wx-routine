@@ -366,7 +366,7 @@ Page({
             },
           });
         } else {
-          wx.saveVideoToPhotosAlbum({
+          wx.saveFileToDisk({
             filePath: res.tempFilePath,
             success(res) {
               console.log(res);

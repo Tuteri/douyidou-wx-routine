@@ -14,11 +14,12 @@ App({
     parseNum: 0,
   },
   onLaunch() {
-    const systemInfo = wx.getDeviceInfo();
-    if (systemInfo && (systemInfo.platform === "windows" || systemInfo.platform === "mac")) {
-      this.globalData.isMobile = false;
+    if(wx.getDeviceInfo){
+      const systemInfo = wx.getDeviceInfo();
+      if (systemInfo && (systemInfo.platform === "windows" || systemInfo.platform === "mac")) {
+        this.globalData.isMobile = false;
+      }
     }
-
     console.log("onLaunch");
     // 获取小程序更新机制兼容
     if (wx.canIUse("getUpdateManager")) {
