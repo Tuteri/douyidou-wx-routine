@@ -54,7 +54,7 @@ const request = (url, method = "GET", data = {}, headers = {}) => {
   });
   return queue;
 }
-const getHeaders = (headers)=>{
+const getHeaders = (headers={})=>{
   let token = wx.getStorageSync("token");
   // 处理 headers，只有 token 存在时才添加 Authorization
   const header = {
@@ -110,6 +110,7 @@ const del = (url, data = {}, headers = {}) => request(url, "DELETE", data, heade
 
 // 导出
 module.exports = {
+  getHeaders,
   request,
   get,
   post,

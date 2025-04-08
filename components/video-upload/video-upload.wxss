@@ -1,0 +1,15 @@
+.upload{
+  
+  width: 100%;
+  height: 400rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--td-upload-add-disabled-bg-color, var(--td-bg-color-component-disabled, var(--td-gray-color-2, #eeeeee)));
+  border-radius: calc(var(--td-button-border-radius, var(--td-radius-default, 6px)));
+  box-sizing: border-box;
+  border: 1px solid  var(--wx-bg-color);
+}
+.icon {
+  color: var(--td-upload-add-icon-disabled-color, var(--td-text-color-disabled, var(--td-font-gray-4, rgba(0, 0, 0, 0.26))));
+}

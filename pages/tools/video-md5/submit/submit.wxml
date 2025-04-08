@@ -1,13 +1,13 @@
-
-  <t-notice-bar visible="{{true}}" content="提交后服务器将会处理，请耐心等待。"></t-notice-bar>
-  <view class="d-form-item">
-    <view class="d-label">任务名</view>
-    <t-input placeholder="起一个名字（最多10个字，留空随机）" borderless="{{true}}" maxlength="20" model:value="{{name}}"></t-input>
-  </view>
-  <view class="d-form-item">
-    <view class="d-label">视频地址*</view>
-    <t-textarea t-class="external-class" placeholder="请输入视频地址（支持最大视频时长30分钟）" maxlength="1000" disableDefaultPadding="{{true}}" indicator confirm-type="done" bindchange="onUrlInputChange" value="{{url}}"/>
-  </view>
-  <view class="d-form-item">
-    <t-button theme="primary" size="large" bindtap="onSubmit" block>提交任务</t-button>
-  </view>
+<t-notice-bar visible="{{true}}" content="提交后服务器将会处理，请耐心等待。"></t-notice-bar>
+<view class="d-form-item">
+  <view class="d-label">任务名</view>
+  <t-input placeholder="起一个名字（最多10个字，留空随机）" borderless="{{true}}" maxlength="20" model:value="{{name}}"></t-input>
+</view>
+<view class="d-form-item">
+  <view class="d-label">视频地址</view>
+  <t-textarea t-class="external-class" placeholder="视频地址（最大时长30分钟）" maxlength="1000" disableDefaultPadding="{{true}}" indicator confirm-type="done" bindchange="onUrlInputChange" value="{{url}}" />
+</view>
+<video-upload id="video-upload" bind:onSuccess="uploadSuccess" bind:selectFile="selectFile"></video-upload>
+<view class="d-form-item">
+  <t-button theme="primary" size="large" bindtap="onSubmit" block>提交任务</t-button>
+</view>

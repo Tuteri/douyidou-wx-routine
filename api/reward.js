@@ -2,7 +2,7 @@ const api = require("./request"); // 引入封装的请求工具
 
 const BASE_URL = '/reward';
 /**
- * 配置 API
+ * 奖励 API
  */
 const claim = (data) => {
   return api.post(BASE_URL + "/claim", data);

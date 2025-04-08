@@ -1,0 +1,7 @@
+<view class="d-form-item col">
+  <view class="d-label">上传视频</view>
+  <view class="upload" bind:tap="onSelectFile" wx:if="{{!filepath}}">
+    <t-icon t-class="icon" name="add" size="100rpx"></t-icon>
+  </view>
+  <video src="{{filepath}}" controls style="width: 100%;" wx:else></video>
+</view>

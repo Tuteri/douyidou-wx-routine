@@ -8,6 +8,7 @@
     "t-radio-group": "tdesign-miniprogram/radio-group/radio-group",
     "t-divider": "tdesign-miniprogram/divider/divider",
     "t-button": "tdesign-miniprogram/button/button",
-    "t-notice-bar": "tdesign-miniprogram/notice-bar/notice-bar"
+    "t-notice-bar": "tdesign-miniprogram/notice-bar/notice-bar",
+    "video-upload": "/components/video-upload/video-upload"
   }
 }
