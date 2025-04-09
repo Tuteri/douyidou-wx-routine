@@ -1,11 +1,12 @@
-import Toast, { hideToast } from "tdesign-miniprogram/toast/index";
-const parseApi = require("../../../../api/parse");
-const userApi = require("../../../../api/user");
+import Toast, { hideToast } from 'tdesign-miniprogram/toast/index';
+const parseApi = require('../../../../api/parse');
+const userApi = require('../../../../api/user');
 const app = getApp();
-const { dayjs, openSetting,showDialog } = require("../../../../utils/util");
+const { dayjs, openSetting, showDialog } = require('../../../../utils/util');
 const saveAllTaskQueue = [];
-let videoAd = null;
+const RewardedVideoAd = require('../../../../utils/rewarded-video-ad')
 let videoAdFn = () => {};
+let videoAd = null;
 Page({
   /**
    * 页面的初始数据
@@ -16,54 +17,54 @@ Page({
     skeleton: [
       [
         {
-          width: "327rpx",
+          width: '327rpx'
         },
         {
-          width: "327rpx",
-        },
+          width: '327rpx'
+        }
       ],
       [
         {
-          width: "168rpx",
-          height: "32rpx",
+          width: '168rpx',
+          height: '32rpx'
         },
         {
-          width: "486rpx",
-          height: "32rpx",
-        },
+          width: '486rpx',
+          height: '32rpx'
+        }
       ],
       [
         {
-          width: "168rpx",
-          height: "32rpx",
+          width: '168rpx',
+          height: '32rpx'
         },
         {
-          width: "486rpx",
-          height: "32rpx",
-        },
+          width: '486rpx',
+          height: '32rpx'
+        }
       ],
       [
         {
-          width: "118rpx",
-          height: "32rpx",
+          width: '118rpx',
+          height: '32rpx'
         },
         {
-          width: "536rpx",
-          height: "32rpx",
-        },
+          width: '536rpx',
+          height: '32rpx'
+        }
       ],
       [
         {
-          width: "100%",
-          height: "32rpx",
-        },
+          width: '100%',
+          height: '32rpx'
+        }
       ],
       [
         {
-          width: "100%",
-          height: "32rpx",
-        },
-      ],
+          width: '100%',
+          height: '32rpx'
+        }
+      ]
     ],
     showSkeleton: true,
     videoDownloadTask: null,
@@ -84,11 +85,11 @@ Page({
       totalTask: 0,
       doneTask: 0,
       successTask: 0,
-      errorTask: 0,
+      errorTask: 0
     },
     adSkip: false,
     isSave: false, //保存状态，只触发一次
-    config: {},
+    config: {}
   },
 
   /**
@@ -97,102 +98,81 @@ Page({
   onLoad(options) {
     this.setData({
       id: options.id,
-      isMobile: app.globalData.isMobile,
+      isMobile: app.globalData.isMobile
     });
     app.init().then(() => {
       const config = app.globalData.config;
       this.setData({
-        config,
+        config
       });
-      // 创建广告
-      // 保存广告激励
-      if (this.data.config.adSaveStatus === "true") {
-        videoAd = wx.createRewardedVideoAd({
-          adUnitId: this.data.config.adRewardsId,
-        });
-        videoAd.onLoad(() => {
-          console.log("onLoad");
-        });
-        videoAd.onError((err) => {
-          console.error("激励视频广告加载失败", err);
-        });
-        videoAd.onClose((res) => {
-          console.log("onclose", res);
-          if (res.isEnded) {
-            // 发起领奖
-            app
-              .handleRewardClaim(2, config.adRewardsId, this.data.id)
-              .then(async (res) => {
-                userApi.consumer({type:1});
-                this.setData({
-                  adSkip: true,
-                  isSave: true,
-                });
-                videoAdFn();
-              });
-          }
-        });
-      } else {
+      // 广告状态
+      if (config.adSaveStatus === 'false') {
         this.setData({
-          adSkip: true,
+          adSkip: true
         });
+      }else{
+        videoAd = new RewardedVideoAd(config.adRewardsId,"info");
+        videoAd.init();
       }
     });
   },
   onShow() {
-    this.getInfo().then((res) => {
+    this.getInfo().then(res => {
       this.setData({
-        showSkeleton: false,
+        showSkeleton: false
       });
     });
   },
   // 展示广告
   async showAd() {
     if (!this.data.isSave) {
-      const adSkip = await app.computeAdSkipSave()
-      if(adSkip) await userApi.consumer({type:1});
+      const adSkip = await app.computeAdSkipSave();
+      if (adSkip) await userApi.consumer({ type: 1 });
       this.setData({
-        adSkip: adSkip,
+        adSkip: adSkip
       });
     }
     if (videoAd && !this.data.adSkip) {
-      showDialog('您没有保存次数，继续观看广告获取保存次数？').then(res=>{
-        videoAd.show().catch(() => {
-          // 失败重试
-          videoAd
-            .load()
-            .then(() => videoAd.show())
-            .catch((err) => {
-              wx.showToast({
-                title: "系统发生错误，请联系管理员",
-                icon: "none",
+      showDialog('您没有保存次数，继续观看广告获取保存次数？')
+        .then(res => {
+          videoAd.show().then(res => {
+            if (res) {
+              // 发起领奖
+              app.handleRewardClaim(2, this.data.config.adRewardsId, this.data.id).then(res => {
+                userApi.consumer({ type: 1 });
+                this.setData({
+                  adSkip: true,
+                  isSave: true
+                });
+                videoAdFn();
               });
-            });
+            }
+          });
+        })
+        .catch(res => {
+          console.log('取消观看广告');
         });
-      }).catch(res=>{
-        console.log("取消观看广告")
-      })
     } else {
       this.setData({
-        adSkip: true,
+        adSkip: true
       });
       videoAdFn();
     }
   },
   getInfo() {
     let data = {
-      id: this.data.id,
+      id: this.data.id
     };
-    return parseApi.urlInfo(data).then((res) => {
+    return parseApi.urlInfo(data).then(res => {
       res.data.createFromNow = dayjs(res.data.createTime).fromNow();
       res.data.textOrigin = res.data.text;
       if (!res.data.text) {
-        res.data.text = "Unknow";
+        res.data.text = 'Unknow';
       } else if (res.data.text.length > 10) {
-        res.data.text = res.data.text.substr(0, 10) + "...";
+        res.data.text = res.data.text.substr(0, 10) + '...';
       }
       this.setData({
-        info: res.data,
+        info: res.data
       });
     });
   },
@@ -210,31 +190,31 @@ Page({
       const downloadTask = wx.downloadFile({
         url: e.currentTarget.dataset.text,
         useHighPerformanceMode: true,
-        success: (res) => {
+        success: res => {
           wx.saveImageToPhotosAlbum({
             filePath: res.tempFilePath,
             success(res) {
               wx.showToast({
-                title: "保存成功",
-                icon: "none",
+                title: '保存成功',
+                icon: 'none'
               });
             },
             fail(res) {
               console.log(res);
               wx.showToast({
-                title: "保存失败",
-                icon: "none",
+                title: '保存失败',
+                icon: 'none'
               });
-            },
+            }
           });
         },
-        fail: (res) => {
+        fail: res => {
           console.log(res);
           wx.showToast({
-            title: "下载失败",
-            icon: "none",
+            title: '下载失败',
+            icon: 'none'
           });
-        },
+        }
       });
     });
   },
@@ -255,60 +235,60 @@ Page({
       let downloadTask = curVideoDownloadTask.downloadTask;
       downloadTask.abort();
       this.setData({
-        [`videoDownloadTask[${index}]`]: null,
+        [`videoDownloadTask[${index}]`]: null
       });
       return;
     }
-    openSetting().then((res) => {
+    openSetting().then(res => {
       const downloadTask = wx.downloadFile({
         url: e.currentTarget.dataset.text,
         useHighPerformanceMode: true,
         timeout: 1800000,
-        success: (res) => {
+        success: res => {
           wx.saveVideoToPhotosAlbum({
             filePath: res.tempFilePath,
             success(res) {
               wx.showToast({
-                title: "保存成功",
-                icon: "none",
+                title: '保存成功',
+                icon: 'none'
               });
             },
             fail(res) {
               wx.showToast({
-                title: "保存失败",
-                icon: "none",
+                title: '保存失败',
+                icon: 'none'
               });
               that.setData({
-                [`videoDownloadTask[${index}]`]: null,
+                [`videoDownloadTask[${index}]`]: null
               });
-            },
+            }
           });
         },
-        fail: (res) => {
+        fail: res => {
           console.log(res);
           wx.showToast({
-            title: "下载失败",
-            icon: "none",
+            title: '下载失败',
+            icon: 'none'
           });
-        },
+        }
       });
       this.setData({
         [`videoDownloadTask[${index}]`]: {
           downloadTask,
           progress: 0,
-          action: true,
-        },
+          action: true
+        }
       });
       // 下载进度
-      downloadTask.onProgressUpdate((res) => {
+      downloadTask.onProgressUpdate(res => {
         // let progress = res.progress || 100;
         this.setData({
-          [`videoDownloadTask[${index}].progress`]: res.progress,
+          [`videoDownloadTask[${index}].progress`]: res.progress
         });
         console.log(res.progress);
         if (res.progress == 100) {
           this.setData({
-            [`videoDownloadTask[${index}].action`]: false,
+            [`videoDownloadTask[${index}].action`]: false
           });
         }
       });
@@ -331,7 +311,7 @@ Page({
       let downloadTask = curAudioDownloadTask.downloadTask;
       downloadTask.abort();
       this.setData({
-        [`audioDownloadTask[${index}]`]: null,
+        [`audioDownloadTask[${index}]`]: null
       });
       return;
     }
@@ -340,7 +320,7 @@ Page({
       url: e.currentTarget.dataset.text,
       useHighPerformanceMode: true,
       timeout: 1800000,
-      success: (res) => {
+      success: res => {
         const fs = wx.getFileSystemManager();
         if (this.data.isMobile) {
           fs.saveFile({
@@ -349,21 +329,21 @@ Page({
             success(res) {
               console.log(res);
               wx.showToast({
-                title: "保存成功 路径 " + res.savedFilePath,
-                icon: "none",
-                duration: 4000,
+                title: '保存成功 路径 ' + res.savedFilePath,
+                icon: 'none',
+                duration: 4000
               });
             },
             fail(res) {
               console.log(res);
               wx.showToast({
-                title: "保存失败",
-                icon: "none",
+                title: '保存失败',
+                icon: 'none'
               });
               that.setData({
-                [`audioDownloadTask[${index}]`]: null,
+                [`audioDownloadTask[${index}]`]: null
               });
-            },
+            }
           });
         } else {
           wx.saveFileToDisk({
@@ -371,48 +351,48 @@ Page({
             success(res) {
               console.log(res);
               wx.showToast({
-                title: "保存成功",
-                icon: "none",
+                title: '保存成功',
+                icon: 'none'
               });
             },
             fail(res) {
               console.log(res);
               wx.showToast({
-                title: "保存失败",
-                icon: "none",
+                title: '保存失败',
+                icon: 'none'
               });
               that.setData({
-                [`audioDownloadTask[${index}]`]: null,
+                [`audioDownloadTask[${index}]`]: null
               });
-            },
+            }
           });
         }
       },
-      fail: (res) => {
+      fail: res => {
         console.log(res);
         wx.showToast({
-          title: "下载失败",
-          icon: "none",
+          title: '下载失败',
+          icon: 'none'
         });
-      },
+      }
     });
     this.setData({
       [`audioDownloadTask[${index}]`]: {
         downloadTask,
         progress: 0,
-        action: true,
-      },
+        action: true
+      }
     });
     // 下载进度
-    downloadTask.onProgressUpdate((res) => {
+    downloadTask.onProgressUpdate(res => {
       // let progress = res.progress || 100;
       this.setData({
-        [`audioDownloadTask[${index}].progress`]: res.progress,
+        [`audioDownloadTask[${index}].progress`]: res.progress
       });
       console.log(res.progress);
       if (res.progress == 100) {
         this.setData({
-          [`audioDownloadTask[${index}].action`]: false,
+          [`audioDownloadTask[${index}].action`]: false
         });
       }
     });
@@ -427,8 +407,8 @@ Page({
         totalTask: t,
         doneTask: 0,
         successTask: 0,
-        errorTask: 0,
-      },
+        errorTask: 0
+      }
     });
   },
   // 保存图集全部
@@ -445,48 +425,43 @@ Page({
     openSetting().then(() => {
       Toast({
         context: this,
-        selector: "#t-toast",
+        selector: '#t-toast',
         duration: -1,
-        theme: "loading",
-        direction: "column",
+        theme: 'loading',
+        direction: 'column'
       });
-      this.data.info.proxy.images.forEach((item) => {
+      this.data.info.proxy.images.forEach(item => {
         const task = () => {
-          return new Promise((resolve) => {
+          return new Promise(resolve => {
             wx.downloadFile({
               url: item,
               useHighPerformanceMode: true,
-              success: (res) => {
+              success: res => {
                 wx.saveImageToPhotosAlbum({
                   filePath: res.tempFilePath,
                   success(res) {
                     that.setData({
-                      ["saveAllTask.successTask"]:
-                        that.data.saveAllTask.successTask + 1,
-                      ["saveAllTask.doneTask"]:
-                        that.data.saveAllTask.doneTask + 1,
+                      ['saveAllTask.successTask']: that.data.saveAllTask.successTask + 1,
+                      ['saveAllTask.doneTask']: that.data.saveAllTask.doneTask + 1
                     });
                     resolve();
                   },
                   fail(res) {
                     that.setData({
-                      ["saveAllTask.errorTask"]:
-                        that.data.saveAllTask.errorTask + 1,
-                      ["saveAllTask.doneTask"]:
-                        that.data.saveAllTask.doneTask + 1,
+                      ['saveAllTask.errorTask']: that.data.saveAllTask.errorTask + 1,
+                      ['saveAllTask.doneTask']: that.data.saveAllTask.doneTask + 1
                     });
                     resolve();
-                  },
+                  }
                 });
               },
-              fail: (res) => {
+              fail: res => {
                 that.setData({
-                  ["saveAllTask.errorTask"]:
-                    that.data.saveAllTask.errorTask + 1,
-                  ["saveAllTask.doneTask"]: that.data.saveAllTask.doneTask + 1,
+                  ['saveAllTask.errorTask']: that.data.saveAllTask.errorTask + 1,
+                  ['saveAllTask.doneTask']: that.data.saveAllTask.doneTask + 1
                 });
                 resolve();
-              },
+              }
             });
           });
         };
@@ -509,48 +484,43 @@ Page({
     openSetting().then(() => {
       Toast({
         context: this,
-        selector: "#t-toast",
+        selector: '#t-toast',
         duration: -1,
-        theme: "loading",
-        direction: "column",
+        theme: 'loading',
+        direction: 'column'
       });
-      this.data.info.proxy.video.forEach((item) => {
+      this.data.info.proxy.video.forEach(item => {
         const task = () => {
-          return new Promise((resolve) => {
+          return new Promise(resolve => {
             wx.downloadFile({
               url: item,
               useHighPerformanceMode: true,
-              success: (res) => {
+              success: res => {
                 wx.saveVideoToPhotosAlbum({
                   filePath: res.tempFilePath,
                   success(res) {
                     that.setData({
-                      ["saveAllTask.successTask"]:
-                        that.data.saveAllTask.successTask + 1,
-                      ["saveAllTask.doneTask"]:
-                        that.data.saveAllTask.doneTask + 1,
+                      ['saveAllTask.successTask']: that.data.saveAllTask.successTask + 1,
+                      ['saveAllTask.doneTask']: that.data.saveAllTask.doneTask + 1
                     });
                     resolve();
                   },
                   fail(res) {
                     that.setData({
-                      ["saveAllTask.errorTask"]:
-                        that.data.saveAllTask.errorTask + 1,
-                      ["saveAllTask.doneTask"]:
-                        that.data.saveAllTask.doneTask + 1,
+                      ['saveAllTask.errorTask']: that.data.saveAllTask.errorTask + 1,
+                      ['saveAllTask.doneTask']: that.data.saveAllTask.doneTask + 1
                     });
                     resolve();
-                  },
+                  }
                 });
               },
-              fail: (res) => {
+              fail: res => {
                 that.setData({
-                  ["saveAllTask.errorTask"]:
-                    that.data.saveAllTask.errorTask + 1,
-                  ["saveAllTask.doneTask"]: that.data.saveAllTask.doneTask + 1,
+                  ['saveAllTask.errorTask']: that.data.saveAllTask.errorTask + 1,
+                  ['saveAllTask.doneTask']: that.data.saveAllTask.doneTask + 1
                 });
                 resolve();
-              },
+              }
             });
           });
         };
@@ -563,11 +533,11 @@ Page({
     if (saveAllTaskQueue.length === 0) {
       hideToast({
         context: this,
-        selector: "#t-toast",
+        selector: '#t-toast'
       });
       wx.showToast({
-        title: "保存成功",
-        icon: "none",
+        title: '保存成功',
+        icon: 'none'
       });
       return Promise.resolve();
     }
@@ -577,7 +547,7 @@ Page({
   handleHide() {
     hideToast({
       context: this,
-      selector: "#t-toast",
+      selector: '#t-toast'
     });
   },
   copyText(e) {
@@ -592,36 +562,34 @@ Page({
       return;
     }
     wx.setClipboardData({
-      data: text,
+      data: text
     });
   },
   showImageViewer(e) {
-    const urls = e.currentTarget.dataset.type == "1"
-    ? this.data.info.images
-    : [this.data.info.cover];
+    const urls = e.currentTarget.dataset.type == '1' ? this.data.info.images : [this.data.info.cover];
     const index = e.currentTarget.dataset.index;
     if (this.data.adSkip) {
       wx.previewImage({
-        urls:urls,
+        urls: urls,
         showmenu: true,
-        current: urls[index],
+        current: urls[index]
       });
     } else {
       this.setData({
         imagesViewer: urls,
         visible: true,
-        curIndex: index,
+        curIndex: index
       });
     }
   },
   closeImageViewer(e) {
     this.setData({
-      visible: false,
+      visible: false
     });
   },
   onPageScroll(e) {
     this.setData({
-      scrollTop: e.scrollTop,
+      scrollTop: e.scrollTop
     });
   },
   /**
@@ -652,5 +620,5 @@ Page({
   /**
    * 用户点击右上角分享
    */
-  onShareAppMessage() {},
+  onShareAppMessage() {}
 });

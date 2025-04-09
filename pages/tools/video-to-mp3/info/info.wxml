@@ -1,4 +1,9 @@
 <view class="container">
+  <t-notice-bar visible="{{true}}" prefixIcon="{{false}}" content="重要：请及时下载，避免资源失效">
+    <view slot="prefix-icon">
+      <t-icon name="error-circle-filled"></t-icon>
+    </view>
+  </t-notice-bar>
   <t-pull-down-refresh value="{{enable}}" loadingTexts="{{['下拉刷新', '松手刷新', '正在刷新', '刷新完成']}}" bind:refresh="onRefresh" t-class="refresh">
     <!-- 包裹页面全部内容 -->
     <view class="box">

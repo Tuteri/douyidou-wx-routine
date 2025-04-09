@@ -21,7 +21,7 @@ page {
 }
 
 .external-class {
-  height: 200rpx;
+  height: 140rpx;
   flex: 1;
 }
 

@@ -1,10 +1,10 @@
 //获取应用实例
 const app = getApp();
 const parseApi = require('../../api/parse')
-const rewardApi = require('../../api/reward')
 const {showDialog} = require('../../utils/util')
-let videoAd = null;
+const RewardedVideoAd = require('../../utils/rewarded-video-ad')
 let videoAdFn = () => {};
+let videoAd = null;
 Page({
   data: {
     isLogin: false,
@@ -31,38 +31,14 @@ Page({
         userInfo,
         config,
       })
-      // 创建广告
       // 解析广告激励
-      if (config.adParseStatus === 'true') {
-        videoAd = wx.createRewardedVideoAd({
-          adUnitId: config.adRewardsId,
-        })
-        videoAd.onLoad(() => {
-          console.log("onLoad")
-        })
-        videoAd.onError((err) => {
-          console.error('激励视频广告加载失败', err)
-        })
-        videoAd.onClose((res) => {
-          console.log("onclose", res)
-          if (res.isEnded) {
-            wx.showLoading({
-              title: '加载中',
-            })
-            // 发起领奖
-            app.handleRewardClaim(1,config.adRewardsId,this.data.videoUrl).then(async res=>{
-              this.setData({
-                adSkip: true,
-              })
-              videoAdFn();
-            })
-          }
-        })
-      } else {
+      if (config.adParseStatus === 'false') {
         this.setData({
           adSkip: true,
         })
       }
+      videoAd = new RewardedVideoAd(config.adRewardsId,"index");
+      videoAd.init();
     })
   },
   onShow() {
@@ -133,16 +109,19 @@ Page({
   showAd() {
     if (videoAd && !this.data.adSkip) {
       showDialog('您没有解析次数，继续观看广告获取解析次数？').then(res=>{
-        videoAd.show().catch(() => {
-          // 失败重试
-          videoAd.load()
-            .then(() => videoAd.show())
-            .catch(err => {
-              wx.showToast({
-                title: '系统发生错误，请联系管理员',
-                icon: 'none'
-              })
+        videoAd.show().then(res=>{
+          if(res){
+            wx.showLoading({
+              title: '加载中',
             })
+            // 发起领奖
+            app.handleRewardClaim(1,this.data.config.adRewardsId,this.data.videoUrl).then(async res=>{
+              this.setData({
+                adSkip: true,
+              })
+              videoAdFn();
+            })
+          }
         })
       }).catch((res)=>{
         console.log("取消观看广告")

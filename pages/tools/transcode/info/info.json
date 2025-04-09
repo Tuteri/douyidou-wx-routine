@@ -6,6 +6,7 @@
     "t-pull-down-refresh": "tdesign-miniprogram/pull-down-refresh/pull-down-refresh",
     "t-cell": "tdesign-miniprogram/cell/cell",
     "t-tag": "tdesign-miniprogram/tag/tag",
+    "t-notice-bar": "tdesign-miniprogram/notice-bar/notice-bar",
     "t-button":"tdesign-miniprogram/button/button"
   }
 }

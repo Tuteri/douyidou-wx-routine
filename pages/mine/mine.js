@@ -1,5 +1,6 @@
 const app = getApp();
-const userApi = require("../../api/user");
+const userApi = require('../../api/user');
+const RewardedVideoAd = require('../../utils/rewarded-video-ad')
 let videoAd = null;
 let videoAdFn = () => {};
 Page({
@@ -11,28 +12,13 @@ Page({
     showExchange: false,
     config: {},
     parseNum: 0,
-    exchangeParseNum: 5,
+    exchangeParseNum: 5
   },
   onLoad() {
     app.init().then(() => {
       const config = app.globalData.config;
-      if (config.adRewardTokensStatus === "true") {
-        videoAd = wx.createRewardedVideoAd({
-          adUnitId: config.adRewardTokensId,
-        });
-        videoAd.onLoad(() => {
-          console.log("onLoad");
-        });
-        videoAd.onError((err) => {
-          console.error("激励视频广告加载失败", err);
-        });
-        videoAd.onClose((res) => {
-          console.log("onclose", res);
-          if (res.isEnded) {
-            videoAdFn();
-          }
-        });
-      }
+      videoAd = new RewardedVideoAd(config.adRewardTokensId,"mine")
+      videoAd.init();
     });
   },
   onShow() {
@@ -42,93 +28,89 @@ Page({
       this.setData({
         isLogin: app.globalData.isLogin,
         userInfo: userInfo,
-        config: config,
+        config: config
       });
       this.getUserInfo();
     });
     if (this.data.isShareAppMessage) {
-      app.handleRewardClaim(11, "", "分享至好友").then((res) => {
+      app.handleRewardClaim(11, '', '分享至好友').then(res => {
         if (res.data) {
           wx.showToast({
-            title: "分享成功",
+            title: '分享成功'
           });
           this.setData({
-            isShareAppMessage: false,
+            isShareAppMessage: false
           });
         }
       });
     } else if (this.data.isShareAppMessage) {
-      app.handleRewardClaim(11, "", "分享至朋友圈").then((res) => {
+      app.handleRewardClaim(11, '', '分享至朋友圈').then(res => {
         if (res.data) {
           wx.showToast({
-            title: "分享成功",
+            title: '分享成功'
           });
           this.setData({
-            isShareTimeline: false,
+            isShareTimeline: false
           });
         }
       });
     }
   },
+  // 触发广告
   showAd() {
     if (videoAd) {
-      videoAd.show().catch(() => {
-        // 失败重试
-        videoAd
-          .load()
-          .then(() => videoAd.show())
-          .catch((err) => {
-            wx.showToast({
-              title: "系统发生错误，请联系管理员",
-              icon: "none",
-            });
-          });
-      });
+      videoAd.show().then(res=>{
+        if(res){
+          videoAdFn();
+        }
+      })
     }
   },
   // 获取用户信息
   getUserInfo() {
-    return app.handleGetUserInfo().then((res) => {
+    return app.handleGetUserInfo().then(res => {
       const userInfo = res.data;
       let exchangeParseNum = this.data.exchangeParseNum;
-      let parseNum = (
-        userInfo.tokens / parseInt(this.data.config.tokensToParseNum)
-      ).toFixed(0);
+      let parseNum = 0;
+      if (userInfo.level > 0 || (this.data.config.adParseStatus==='false' && this.data.config.adSaveStatus==='false')) {
+        parseNum = true;
+      } else {
+        parseNum = (userInfo.tokens / parseInt(this.data.config.tokensToParseNum)).toFixed(0);
+      }
+
       // console.log(exchangeParseNum);
       if (exchangeParseNum > parseNum) exchangeParseNum = parseNum;
       this.setData({
         userInfo,
         parseNum,
-        exchangeParseNum:parseNum,
+        exchangeParseNum: parseNum
       });
     });
   },
+  // 点击观看视频
   onReward() {
     videoAdFn = () => {
       this.getReward();
     };
     this.showAd();
   },
+  // 主动获取奖励
   getReward() {
     wx.showLoading({
-      title: "加载中",
+      title: '加载中'
     });
     app
-      .handleRewardClaim(
-        10,
-        this.data.config.adRewardTokensId,
-        "我的-主动观看广告"
-      )
-      .then((res) => {
+      .handleRewardClaim(10, this.data.config.adRewardTokensId, '我的-主动观看广告')
+      .then(res => {
         wx.showToast({
-          title: "已获取奖励",
+          title: '已获取奖励'
         });
         this.getUserInfo();
       })
-      .catch((res) => {
+      .catch(res => {
         wx.showToast({
-          title: "系统错误，请稍后再试",
-          icon: "none",
+          title: '系统错误，请稍后再试',
+          icon: 'none'
         });
       });
   },
@@ -137,25 +119,25 @@ Page({
     const parseNum = this.data.exchangeParseNum;
     if (parseNum <= 0) {
       wx.showToast({
-        title: "积分不足",
-        icon: "none",
+        title: '积分不足',
+        icon: 'none'
       });
       this.closeDialog();
       return;
     }
     let data = {
-      parseNum,
+      parseNum
     };
-    userApi.tokensToParseNum(data).then((res) => {
+    userApi.tokensToParseNum(data).then(res => {
       if (res.code == 200) {
         wx.showToast({
-          title: "兑换成功",
+          title: '兑换成功'
         });
         this.getUserInfo();
       } else {
         wx.showToast({
           title: res.message,
-          icon: "none",
+          icon: 'none'
         });
       }
     });
@@ -165,31 +147,31 @@ Page({
   handleExchange(e) {
     const { value } = e.detail;
     this.setData({
-      exchangeParseNum: value,
+      exchangeParseNum: value
     });
   },
   // 隐藏兑换对话框
   closeDialog() {
     this.setData({
-      showExchange: false,
+      showExchange: false
     });
   },
   // 打开对话框
   onExchange() {
     this.setData({
-      showExchange: true,
+      showExchange: true
     });
   },
   onShareAppMessage() {
     this.setData({
-      isShareAppMessage: true,
+      isShareAppMessage: true
     });
     return app.onShareAppMessage();
   },
   onShareTimeline() {
     this.setData({
-      isShareTimeline: true,
+      isShareTimeline: true
     });
     return app.onShareTimeline();
-  },
+  }
 });

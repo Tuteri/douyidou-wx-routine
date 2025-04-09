@@ -10,12 +10,12 @@
     </view>
     <view class="info-more">
       <view class="info-more-item">
-        <view class="info-item-label">可用解析次数</view>
-        <view class="info-item-value">{{userInfo.parseNum || 0}}</view>
+        <view class="info-item-label">可用次数</view>
+        <view class="info-item-value">{{parseNum===true?'不限':userInfo.parseNum}}</view>
       </view>
       <view class="info-more-item">
         <view class="info-item-label">可用积分
-          <t-tag style="margin-left: 10rpx;" variant="light" theme="primary" icon="refresh" bind:tap="onExchange">兑换</t-tag>
+          <t-tag style="margin-left: 10rpx;" variant="light" theme="primary" icon="refresh" bind:tap="onExchange" wx:if="{{parseNum!==true}}">兑换</t-tag>
         </view>
         <view class="info-item-value">{{userInfo.tokens || 0}}</view>
       </view>

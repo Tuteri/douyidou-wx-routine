@@ -1,9 +1,11 @@
 const app = getApp();
 const parseApi = require("../../../../api/parse");
+const userApi = require('../../../../api/user');
 import bytes from "bytes";
+const { dayjs ,showDialog} = require("../../../../utils/util");
+const RewardedVideoAd = require('../../../../utils/rewarded-video-ad');
 let videoAd = null;
 let videoAdFn = () => {};
-const { dayjs ,showDialog} = require("../../../../utils/util");
 Page({
   /**
    * 页面的初始数据
@@ -87,39 +89,14 @@ Page({
       this.setData({
         config,
       });
-      // 创建广告
       // 保存广告激励
-      if (this.data.config.adSaveStatus === "true") {
-        videoAd = wx.createRewardedVideoAd({
-          adUnitId: this.data.config.adRewardsId,
-        });
-        videoAd.onLoad(() => {
-          console.log("onLoad");
-        });
-        videoAd.onError((err) => {
-          console.error("激励视频广告加载失败", err);
-        });
-        videoAd.onClose((res) => {
-          console.log("onclose", res);
-          if (res.isEnded) {
-            // 发起领奖
-            app
-              .handleRewardClaim(4, config.adRewardsId, this.data.id)
-              .then(async (res) => {
-                userApi.consumer({ type: 1 });
-                this.setData({
-                  adSkip: true,
-                  isSave: true,
-                });
-                videoAdFn();
-              });
-          }
-        });
-      } else {
+      if (this.data.config.adSaveStatus === 'false') {
         this.setData({
-          adSkip: true,
+          adSkip: true
         });
       }
+      videoAd = new RewardedVideoAd(config.adRewardsId, 'video-to-mp3/info');
+      videoAd.init();
     });
     this.getInfo().then((res) => {
       this.setData({
@@ -139,17 +116,16 @@ Page({
     if (videoAd && !this.data.adSkip) {
       showDialog("您没有保存次数，继续观看广告获取保存次数？")
         .then((res) => {
-          videoAd.show().catch(() => {
-            // 失败重试
-            videoAd
-              .load()
-              .then(() => videoAd.show())
-              .catch((err) => {
-                wx.showToast({
-                  title: "系统发生错误，请联系管理员",
-                  icon: "none",
-                });
+          videoAd.show().then(res => {
+            // 发起领奖
+            app.handleRewardClaim(4, this.data.config.adRewardsId, this.data.id).then(async res => {
+              userApi.consumer({ type: 1 });
+              this.setData({
+                adSkip: true,
+                isSave: true
               });
+              videoAdFn();
+            });
           });
         })
         .catch((res) => {

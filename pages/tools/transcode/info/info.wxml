@@ -1,4 +1,9 @@
 <view class="container">
+  <t-notice-bar visible="{{true}}" prefixIcon="{{false}}" content="重要：请及时下载，避免资源失效">
+    <view slot="prefix-icon">
+      <t-icon name="error-circle-filled"></t-icon>
+    </view>
+  </t-notice-bar>
   <t-pull-down-refresh value="{{enable}}" loadingTexts="{{['下拉刷新', '松手刷新', '正在刷新', '刷新完成']}}" bind:refresh="onRefresh" t-class="refresh">
     <!-- 包裹页面全部内容 -->
     <view class="box">
@@ -8,7 +13,8 @@
       <view wx:else>
         <video src="{{info.downloadUrl}}" style="width: 100%;" wx:if="{{info.stats == 2}}" />
         <t-cell title="{{info.name}}" note="创建于 {{info.createFromNow}}" hover />
-        <t-cell title="文件大小" note="{{info.size}}" hover wx:if="{{info.stats==1 || info.stats == 2}}" bind:click="copyText">
+        <t-cell title="已处理时长" note="{{info.timeText}}" hover wx:if="{{info.stats==1}}" />
+        <t-cell title="文件大小" note="{{info.size}}" hover wx:if="{{info.stats == 2}}" bind:click="copyText">
           <view slot="description">
             {{allowDownload?"":"文件过大请复制到浏览器下载"}}
           </view>
@@ -22,7 +28,7 @@
           <t-tag theme="default" slot="note" wx:else>等待中</t-tag>
         </t-cell>
         <view class="button-example image-btns" wx:if="{{info.stats == 2}}">
-          <t-button t-class="group-btn" size="small" bind:tap="saveVideo"  block wx:if="{{allowDownload}}">
+          <t-button t-class="group-btn" size="small" bind:tap="saveVideo" block wx:if="{{allowDownload}}">
             <block wx:if="{{videoDownloadTask}}">
               <block wx:if="{{videoDownloadTask.action}}">
                 下载中 {{videoDownloadTask.progress}}%

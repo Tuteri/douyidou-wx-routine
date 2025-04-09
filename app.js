@@ -14,13 +14,13 @@ App({
     parseNum: 0,
   },
   onLaunch() {
+    console.log("onLaunch");
     if(wx.getDeviceInfo){
       const systemInfo = wx.getDeviceInfo();
       if (systemInfo && (systemInfo.platform === "windows" || systemInfo.platform === "mac")) {
         this.globalData.isMobile = false;
       }
     }
-    console.log("onLaunch");
     // 获取小程序更新机制兼容
     if (wx.canIUse("getUpdateManager")) {
       const updateManager = wx.getUpdateManager();
@@ -152,9 +152,10 @@ App({
   // 获取配置
   handleConfigRoutine() {
     return configApi.routine().then((res) => {
-      this.globalData.config = res.data;
+      const config = res.data;
+      this.globalData.config = config;
       wx.setNavigationBarTitle({
-        title: this.globalData.config.title,
+        title: config.title,
       });
       return Promise.resolve();
     });

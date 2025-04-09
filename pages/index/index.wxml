@@ -6,7 +6,6 @@
       <rich-text nodes="{{config.notice}}" />
     </view>
   </t-notice-bar>
-  <ad-custom unit-id="{{config.adBannerId}}" wx:if="{{config.adBannerStatus === 'true'}}"></ad-custom>
   <view class="d-form-item flex jsb">
     <view class="d-label">自动粘贴</view>
     <t-switch slot="note" value="{{autoPaste}}" bind:change="onAutoPaste" />
@@ -16,21 +15,14 @@
     <t-textarea t-class="external-class" placeholder="粘贴视频短链接到这里" maxlength="1000" indicator bind:change="onChange" value="{{videoUrl}}" />
   </view>
   <view class="d-form-item">
-    <!-- <t-button theme="default" size="large" t-class="clear" class="clear" bind:tap="clear">清空</t-button> -->
     <view class="btns">
       <t-button theme="light" size="large" t-class="clear" class="clear animated {{videoUrl?'bounce-in-left':'bounce-out-left'}}" bind:tap="clear">清空</t-button>
       <t-button theme="light" block size="large" t-class="group-btn" bind:tap="paste">一键粘贴</t-button>
       <t-button theme="primary" block size="large" t-class="group-btn" bind:tap="submit">一键解析</t-button>
     </view>
   </view>
-  <!-- <view class="d-form-item">
-    <view class="btns">
-      <view bind:tap="clear" class="clear">清空</view>
-      <t-button theme="light" block size="large" t-class="group-btn" bind:tap="paste">一键粘贴</t-button>
-      <t-button theme="primary" block size="large" t-class="group-btn" bind:tap="submit">一键解析</t-button>
-    </view>
-  </view> -->
   <view class="link-example">
     <t-link size="large" theme="primary" content="解析历史记录" underline suffixIcon="jump" hover navigatorProps="{{ {url:'/pages/user/parse/list/list'} }}" />
   </view>
+  <ad-custom unit-id="{{config.adBannerId}}" wx:if="{{config.adBannerStatus === 'true'}}"></ad-custom>
 </view>

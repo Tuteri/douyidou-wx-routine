@@ -1,5 +1,5 @@
 .external-class {
-  height: 100rpx;
+  height: 150rpx;
   flex: 1;
 }
 .box {
