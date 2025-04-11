@@ -1,0 +1,1 @@
+<t-upload mediaType="{{['image']}}" max="{{1}}" files="{{fileList}}" bind:add="handleAdd" bind:remove="handleRemove" bind:select-change="onSelectChange" bind:complete="onSuccess"></t-upload>
