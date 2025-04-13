@@ -154,9 +154,11 @@ App({
     return configApi.routine().then((res) => {
       const config = res.data;
       this.globalData.config = config;
-      wx.setNavigationBarTitle({
-        title: config.title,
-      });
+      if(!this.globalData.init){
+        wx.setNavigationBarTitle({
+          title: config.title,
+        });
+      }
       return Promise.resolve();
     });
   },
