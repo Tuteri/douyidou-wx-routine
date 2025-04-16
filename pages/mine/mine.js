@@ -30,31 +30,35 @@ Page({
         userInfo: userInfo,
         config: config
       });
-      this.getUserInfo();
+      this.getUserInfo().then(()=>{
+
+        if (this.data.isShareAppMessage) {
+          app.handleRewardClaim(11, '', '分享至好友').then(res => {
+            if (res.data) {
+              wx.showToast({
+                title: '分享成功'
+              });
+              this.setData({
+                isShareAppMessage: false
+              });
+            }
+          });
+        } else if (this.data.isShareAppMessage) {
+          app.handleRewardClaim(11, '', '分享至朋友圈').then(res => {
+            if (res.data) {
+              wx.showToast({
+                title: '分享成功'
+              });
+              this.setData({
+                isShareTimeline: false
+              });
+            }
+          });
+        }
+
+      });
     });
-    if (this.data.isShareAppMessage) {
-      app.handleRewardClaim(11, '', '分享至好友').then(res => {
-        if (res.data) {
-          wx.showToast({
-            title: '分享成功'
-          });
-          this.setData({
-            isShareAppMessage: false
-          });
-        }
-      });
-    } else if (this.data.isShareAppMessage) {
-      app.handleRewardClaim(11, '', '分享至朋友圈').then(res => {
-        if (res.data) {
-          wx.showToast({
-            title: '分享成功'
-          });
-          this.setData({
-            isShareTimeline: false
-          });
-        }
-      });
-    }
+
   },
   // 触发广告
   showAd() {
