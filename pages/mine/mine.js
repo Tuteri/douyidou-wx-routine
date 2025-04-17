@@ -1,6 +1,7 @@
 const app = getApp();
 const userApi = require('../../api/user');
 const RewardedVideoAd = require('../../utils/rewarded-video-ad')
+const {showDialog} = require('../../utils/util')
 let videoAd = null;
 let videoAdFn = () => {};
 Page({
@@ -120,32 +121,39 @@ Page({
   },
   // 确认 兑换次数
   confirmDialog(e) {
-    const parseNum = this.data.exchangeParseNum;
-    if (parseNum <= 0) {
-      wx.showToast({
-        title: '积分不足',
-        icon: 'none'
-      });
-      this.closeDialog();
-      return;
-    }
-    let data = {
-      parseNum
-    };
-    userApi.tokensToParseNum(data).then(res => {
-      if (res.code == 200) {
+    this.closeDialog();
+    wx.showLoading({
+      title: '加载中...',
+    })
+    setTimeout(()=>{
+      wx.hideLoading();
+      const parseNum = this.data.exchangeParseNum;
+      if (parseNum <= 0) {
         wx.showToast({
-          title: '兑换成功'
-        });
-        this.getUserInfo();
-      } else {
-        wx.showToast({
-          title: res.message,
+          title: '积分不足',
           icon: 'none'
         });
+        this.closeDialog();
+        return;
       }
-    });
-    this.closeDialog();
+      let data = {
+        parseNum
+      };
+  
+      userApi.tokensToParseNum(data).then(res => {
+        if (res.code == 200) {
+          wx.showToast({
+            title: '兑换成功'
+          });
+          this.getUserInfo();
+        } else {
+          wx.showToast({
+            title: res.message,
+            icon: 'none'
+          });
+        }
+      });
+    },300)
   },
   // 兑换次数 步进器
   handleExchange(e) {
