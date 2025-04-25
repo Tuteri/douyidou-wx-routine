@@ -12,7 +12,7 @@
   </view>
   <view class="d-form-item">
     <view class="d-label">视频链接</view>
-    <t-textarea t-class="external-class" placeholder="粘贴视频短链接到这里" maxlength="1000" indicator bind:change="onChange" value="{{videoUrl}}" />
+    <t-textarea t-class="external-class" placeholder="粘贴视频短链接到这里" indicator bind:change="onChange" value="{{videoUrl}}" />
   </view>
   <view class="d-form-item">
     <view class="btns">
