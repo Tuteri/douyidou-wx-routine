@@ -20,8 +20,8 @@ Page({
           width: '327rpx'
         },
         {
-          width: '327rpx'
-        }
+          width: "327rpx",
+        },
       ],
       [
         {
@@ -118,7 +118,7 @@ Page({
     });
   },
   onShow() {
-    this.getInfo().then(res => {
+    this.getInfo().then((res) => {
       this.setData({
         showSkeleton: false
       });
@@ -245,7 +245,7 @@ Page({
       });
       return;
     }
-    openSetting().then(res => {
+    openSetting().then((res) => {
       const downloadTask = wx.downloadFile({
         url: e.currentTarget.dataset.text,
         useHighPerformanceMode: true,
@@ -427,18 +427,20 @@ Page({
       return;
     }
     let that = this;
-    this.initSaveAllTask(this.data.info.proxy.images.length);
+
+    let imagesList = this.data.downloadChannel == 1?this.data.info.images:this.data.info.proxy.images;
+    this.initSaveAllTask(imagesList.length);
     openSetting().then(() => {
       Toast({
         context: this,
-        selector: '#t-toast',
+        selector: "#t-toast",
         duration: -1,
         theme: 'loading',
         direction: 'column'
       });
-      this.data.info.proxy.images.forEach(item => {
+      imagesList.forEach(item => {
         const task = () => {
-          return new Promise(resolve => {
+          return new Promise((resolve) => {
             wx.downloadFile({
               url: item,
               useHighPerformanceMode: true,
@@ -486,18 +488,19 @@ Page({
       return;
     }
     let that = this;
-    this.initSaveAllTask(this.data.info.proxy.video.length);
+    let videoList = this.data.downloadChannel == 1?this.data.info.video:this.data.info.proxy.video;
+    this.initSaveAllTask(videoList.length);
     openSetting().then(() => {
       Toast({
         context: this,
-        selector: '#t-toast',
+        selector: "#t-toast",
         duration: -1,
         theme: 'loading',
         direction: 'column'
       });
-      this.data.info.proxy.video.forEach(item => {
+      videoList.forEach(item => {
         const task = () => {
-          return new Promise(resolve => {
+          return new Promise((resolve) => {
             wx.downloadFile({
               url: item,
               useHighPerformanceMode: true,
