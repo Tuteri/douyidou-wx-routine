@@ -1,12 +1,12 @@
 <t-toast id="t-toast">
-<text slot="message">保存进度{{saveAllTask.doneTask}}/{{saveAllTask.totalTask}}</text>
+  <text slot="message">保存进度{{saveAllTask.doneTask}}/{{saveAllTask.totalTask}}</text>
 </t-toast>
 <view class="container">
   <view class="skeleton" wx:if="{{showSkeleton}}">
     <t-skeleton rowCol="{{skeleton}}" loading></t-skeleton>
   </view>
   <view wx:else>
-    <t-notice-bar visible="{{true}}" prefixIcon="{{false}}" content="重要：请及时下载，避免资源失效" >
+    <t-notice-bar visible="{{true}}" prefixIcon="{{false}}" content="重要：请及时下载，避免资源失效">
       <view slot="prefix-icon">
         <t-icon name="error-circle-filled"></t-icon>
       </view>
@@ -25,6 +25,11 @@
       <t-button size="small" bind:tap="copyText" data-text="{{info.textOrigin||info.text}}" block>复制文案</t-button>
     </view>
     <view class="button-example">
+      <t-button size="small" theme="primary" bind:tap="changeDownloadChannel" block > 
+      切换下载通道 当前通道：{{downloadChannel==1?"1（高速）":"2（代理）"}}
+      </t-button>
+    </view>
+    <view class="button-example">
       <t-button size="small" bind:tap="saveVideoAll" block wx:if="{{info.video.length>0}}">下载全部视频（{{info.video.length}}）</t-button>
       <t-button size="small" bind:tap="saveImageAll" block wx:if="{{info.images.length>0}}">下载全部图片（{{info.images.length}}）</t-button>
     </view>
@@ -35,7 +40,7 @@
         <t-grid-item wx:for="{{info.video}}" wx:key="index">
           <video src="{{item}}" data-type="1" data-index="{{index}}" style="width: 100%;" />
           <view class="button-example image-btns">
-            <t-button t-class="group-btn" size="small" bind:tap="saveVideo" data-index="{{index}}" data-text="{{info.proxy.video[index]}}" block>
+            <t-button t-class="group-btn" size="small" bind:tap="saveVideo" data-index="{{index}}" data-text="{{downloadChannel==1?item:info.proxy.video[index]}}" block>
               <block wx:if="{{videoDownloadTask[index]}}">
                 <block wx:if="{{videoDownloadTask[index].action}}">
                   下载中 {{videoDownloadTask[index].progress}}%
@@ -51,7 +56,7 @@
         </t-grid-item>
       </t-grid>
     </view>
-    
+
 
     <view wx:if="{{info.images.length>0}}">
       <t-divider content="图集（{{info.images.length}}）" />
@@ -59,7 +64,7 @@
         <t-grid-item wx:for="{{info.images}}" wx:key="index">
           <t-image src="{{item}}" mode="aspectFill" width="200" height="220" webp="{{true}}" bind:tap="showImageViewer" data-type="1" data-index="{{index}}" />
           <view class="button-example image-btns">
-            <t-button size="extra-small" bind:tap="saveImage" data-index="{{index}}" data-text="{{info.proxy.images[index]}}" block>保存图片</t-button>
+            <t-button size="extra-small" bind:tap="saveImage" data-index="{{index}}" data-text="{{downloadChannel==1?item:info.proxy.images[index]}}" block>保存图片</t-button>
             <t-button size="extra-small" bind:tap="copyText" data-text="{{item}}" block>复制链接</t-button>
           </view>
         </t-grid-item>
@@ -71,7 +76,7 @@
         <t-grid-item wx:for="{{info.audio}}" wx:key="index">
           <video src="{{item}}" data-index="{{index}}" style="width: 100%;height:200rpx" />
           <view class="button-example image-btns">
-            <t-button t-class="group-btn" size="small" bind:tap="saveAudio" data-index="{{index}}" data-text="{{info.proxy.audio[index]}}" block>
+            <t-button t-class="group-btn" size="small" bind:tap="saveAudio" data-index="{{index}}" data-text="{{downloadChannel==1?item:info.proxy.audio[index]}}" block>
               <block wx:if="{{audioDownloadTask[index]}}">
                 <block wx:if="{{audioDownloadTask[index].action}}">
                   下载中 {{audioDownloadTask[index].progress}}%
@@ -93,7 +98,7 @@
         <t-grid-item>
           <t-image src="{{info.cover}}" mode="aspectFill" width="200" height="220" webp="{{true}}" bind:tap="showImageViewer" data-type="0" data-index="0" />
           <view class="button-example image-btns">
-            <t-button size="extra-small" bind:tap="saveImage" data-index="{{index}}" data-text="{{info.proxy.cover}}" block>保存图片</t-button>
+            <t-button size="extra-small" bind:tap="saveImage" data-index="{{index}}" data-text="{{downloadChannel==1?info.cover:info.proxy.cover}}" block>保存图片</t-button>
             <t-button size="extra-small" bind:tap="copyText" data-text="{{info.cover}}" block>复制链接</t-button>
           </view>
         </t-grid-item>

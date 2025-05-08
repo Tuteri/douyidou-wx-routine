@@ -66,6 +66,7 @@ Page({
         }
       ]
     ],
+    downloadChannel:1,
     showSkeleton: true,
     videoDownloadTask: null,
     allowDownload: false,
@@ -122,6 +123,11 @@ Page({
         showSkeleton: false
       });
     });
+  },
+  changeDownloadChannel(){
+    this.setData({
+      downloadChannel:3^this.data.downloadChannel,
+    })
   },
   // 展示广告
   async showAd() {
