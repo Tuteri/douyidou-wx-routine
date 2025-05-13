@@ -125,8 +125,22 @@ Page({
     });
   },
   changeDownloadChannel(){
+    let downloadChannel = 3^this.data.downloadChannel;
+    let info;
+    if(downloadChannel == 1){
+      info = {
+        ...this.data.info,
+        ...this.data.info.origin,
+      };
+    }else{
+      info = {
+        ...this.data.info,
+        ...this.data.info.proxy,
+      };
+    }
     this.setData({
-      downloadChannel:3^this.data.downloadChannel,
+      downloadChannel,
+      info
     })
   },
   // 展示广告
