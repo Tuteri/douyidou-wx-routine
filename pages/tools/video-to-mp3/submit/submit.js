@@ -140,7 +140,7 @@ Component({
               title: '任务已提交',
               icon: 'success'
             });
-            upload.clearFile();
+            upload&&upload.clearFile();
           } else {
             return Promise.reject(res);
           }

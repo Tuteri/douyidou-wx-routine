@@ -18,7 +18,7 @@
           </view>
           <t-tag theme="primary" slot="note" wx:if="{{item.stats==1}}">处理中</t-tag>
           <t-tag theme="success" slot="note" wx:elif="{{item.stats==2}}">成功</t-tag>
-          <t-tag theme="danger" slot="note" wx:elif="{{item.stats==3}}">失败</t-tag>
+          <t-tag theme="danger" slot="note" wx:elif="{{item.stats==3 || item.stats==-1}}">失败</t-tag>
           <t-tag theme="warning" slot="note" wx:elif="{{item.stats==4}}">终止</t-tag>
           <t-tag theme="default" slot="note" wx:else>等待中</t-tag>
         </t-cell>

@@ -117,7 +117,6 @@ Component({
       if (!url) {
         url = this.data.uploadFile.url;
       }
-      console.log(this.data.uploadFile.url);
       let data = { url, name };
       wx.showLoading({
         title: '提交中...',
@@ -128,7 +127,7 @@ Component({
         .then(res => {
           wx.hideLoading();
           if (res.code == 200) {
-            upload.clearFile();
+            upload && upload.clearFile();
             this.setData({
               url: '',
               name: '',
